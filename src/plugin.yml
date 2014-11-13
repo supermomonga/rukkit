@@ -1,0 +1,10 @@
+name: rukkit
+main: com.github.supermomonga.Rukkit.JRubyPlugin
+version: 1.0.0
+website: http://blog.supermomonga.com/
+author: supermomonga
+description: benri
+commands:
+  rkt:
+    description: rukkit commands
+    usage: /rkt [anything]
