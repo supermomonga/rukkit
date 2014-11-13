@@ -1,7 +1,7 @@
 
 # Rukkit
 
-Rukkit(pronounced `ルゥリィァキーッツッッッ！`) is the bukkit plugin which allows you to custom bukkit's behavior by using JRuby.
+Rukkit(pronounced `ルゥリィァキーッツッッッ！`) is the bukkit plugin which allows you to customize bukkit's behavior by using JRuby.
 
 # How to install
 
