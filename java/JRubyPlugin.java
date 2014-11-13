@@ -35,4 +35,9 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     getLogger().info("Rukkit disabled!");
   }
 
+  @Override
+  public boolean onCommand( org.bukkit.command.CommandSender sender, org.bukkit.command.Command command, String label, String[] args ) {
+    getLogger().info("Command passed!")
+  }
+
 }
