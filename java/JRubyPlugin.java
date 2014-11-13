@@ -37,7 +37,7 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
 
   @Override
   public boolean onCommand( org.bukkit.command.CommandSender sender, org.bukkit.command.Command command, String label, String[] args ) {
-    getLogger().info("Command passed!")
+    getLogger().info("Command passed!");
   }
 
 }
