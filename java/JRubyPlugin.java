@@ -8,12 +8,17 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.jruby.embed.ScriptingContainer;
 
 public class JRubyPlugin extends JavaPlugin implements Listener {
-  private ScriptingContainer jruby = new ScriptingContainer();
+  private ScriptingContainer jruby;
   private Object eh;
   private Object rubyTrue, rubyFalse, rubyNil;
   private FileConfiguration config;
 
-  private void initializeRubyVariables() {
+  private void initializeJRuby() {
+    jruby = new ScriptingContainer();
+    jruby.setClassLoader(getClass().getClassLoader());
+    jruby.setCompatVersion(org.jruby.CompatVersion.RUBY2_0);
+
+    // Because of no compatibility with Java's one
     rubyTrue = jruby.runScriptlet("true");
     rubyFalse = jruby.runScriptlet("false");
     rubyNil = jruby.runScriptlet("nil");
@@ -25,7 +30,7 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
 
   @Override
   public void onEnable() {
-    initializeRubyVariables();
+    initializeJRuby();
     loadConfig();
     getLogger().info("Rukkit enabled!");
   }
