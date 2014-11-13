@@ -5,6 +5,9 @@ website: http://blog.supermomonga.com/
 author: supermomonga
 description: benri
 commands:
-  rkt:
+  rukkit:
     description: rukkit commands
     usage: /rkt [anything]
+aliases:
+  rkt:
+    - "rukkit $1-"
