@@ -150,6 +150,7 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
   // EventHandler mappings
   // TODO: I want to generate all event handler mappings automatically,
   //       but it must be painful to parse JavaDoc...
+  //       @ujm says that "use jruby repl and ruby reflection to list them up."
   @EventHandler
   public void onPlayerJoin(org.bukkit.event.player.PlayerJoinEvent event) {
     getLogger().info("eh: on_player_join");
