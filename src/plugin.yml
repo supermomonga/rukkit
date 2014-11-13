@@ -1,5 +1,5 @@
 name: rukkit
-main: com.github.supermomonga.Rukkit.JRubyPlugin
+main: com.supermomonga.Rukkit.JRubyPlugin
 version: 1.0.0
 website: http://blog.supermomonga.com/
 author: supermomonga
@@ -7,7 +7,7 @@ description: benri
 commands:
   rukkit:
     description: rukkit commands
-    usage: /rkt [anything]
+    usage: /rukkit [anything]
 aliases:
   rkt:
     - "rukkit $1-"

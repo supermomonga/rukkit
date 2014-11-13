@@ -1,4 +1,4 @@
-package com.github.supermomonga.Rukkit;
+package com.supermomonga.Rukkit;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.event.Listener;
