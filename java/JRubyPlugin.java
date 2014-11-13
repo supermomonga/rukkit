@@ -13,8 +13,20 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
   private Object rubyTrue, rubyFalse, rubyNil;
   private FileConfiguration config;
 
+  private void initializeRubyVariables() {
+    rubyTrue = jruby.runScriptlet("true");
+    rubyFalse = jruby.runScriptlet("false");
+    rubyNil = jruby.runScriptlet("nil");
+  }
+
+  private void loadConfig() {
+    config = getConfig();
+  }
+
   @Override
   public void onEnable() {
+    initializeRubyVariables();
+    loadConfig();
     getLogger().info("Rukkit enabled!");
   }
 
