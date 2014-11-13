@@ -11,3 +11,10 @@ commands:
 aliases:
   rkt:
     - "rukkit $1-"
+rukkit:
+  plugin_dir:
+    "file:///Users/momonga/Develops/rukkit/example_plugins/"
+  plugins:
+    - strong_boots
+    - fast_dash
+
