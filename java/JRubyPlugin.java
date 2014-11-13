@@ -1,6 +1,7 @@
 package com.supermomonga.Rukkit;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.net.URL;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,6 +30,36 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     rubyNil = jruby.runScriptlet("nil");
   }
 
+  private boolean isRubyMethodExists(String method) {
+    if (jruby.callMethod(eventHandler, "respond_to?", method).equals(rubyTrue)) {
+      return true;
+    } else {
+      getLogger().info("method doesn't exists: " + method);
+      return false;
+    }
+  }
+
+  private void callJRubyMethodIfExists(String method, Object arg1) {
+    if (isRubyMethodExists(method))
+      jruby.callMethod(eventHandler, method, arg1);
+  }
+
+  private void callJRubyMethodIfExists(String method, Object arg1, Object arg2) {
+    if (isRubyMethodExists(method))
+      jruby.callMethod(eventHandler, method, arg1, arg2);
+  }
+
+  private void callJRubyMethodIfExists(String method, Object arg1, Object arg2, Object arg3) {
+    if (isRubyMethodExists(method))
+      jruby.callMethod(eventHandler, method, arg1, arg2, arg3);
+  }
+
+  private void callJRubyMethodIfExists(String method, Object arg1, Object arg2, Object arg3, Object arg4) {
+    if (isRubyMethodExists(method))
+      jruby.callMethod(eventHandler, method, arg1, arg2, arg3, arg4);
+  }
+
+
   private void loadConfig() {
     config = getConfig();
   }
@@ -38,7 +69,7 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
       return jruby.runScriptlet(io, path);
     } finally {
       try {
-        if(io != null) {
+        if (io != null) {
           io.close();
         }
       } catch (IOException e) {
@@ -69,13 +100,40 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     }
   }
 
+  private void loadCorePlugins() {
+    List<String> plugins = new ArrayList<String>();
+    plugins.add("util");
+    /* plugins.add("web"); */
+
+    // TODO: Builtin plugins should not be stored in user-defined-plugin dir,
+    //       so I want to put them into jar.
+    loadRukkitPlugins(
+        config.getString("rukkit.plugin_dir"),
+        plugins
+        );
+  }
+
+  private void loadUserPlugins() {
+    loadRukkitPlugins(
+        config.getString("rukkit.plugin_dir"),
+        config.getStringList("rukkit.plugins")
+        );
+  }
+
+  private void applyEventHandler() {
+    getServer().getPluginManager().registerEvents(this, this);
+  }
+
   @Override
   public void onEnable() {
     initializeJRuby();
     loadConfig();
 
-    loadRukkitPlugins(config.getString("rukkit.plugin_dir"), config.getStringList("rukkit.plugins"));
+    loadCorePlugins();
+    loadUserPlugins();
     getLogger().info("Rukkit enabled!");
+
+    applyEventHandler();
   }
 
   @Override
@@ -87,6 +145,20 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
   public boolean onCommand( org.bukkit.command.CommandSender sender, org.bukkit.command.Command command, String label, String[] args ) {
     getLogger().info("Command passed!");
     return true;
+  }
+
+  // EventHandler mappings
+  // TODO: I want to generate all event handler mappings automatically,
+  //       but it must be painful to parse JavaDoc...
+  @EventHandler
+  public void onPlayerJoin(org.bukkit.event.player.PlayerJoinEvent event) {
+    getLogger().info("eh: on_player_join");
+    callJRubyMethodIfExists("on_player_join", event);
+  }
+  @EventHandler
+  public void onPlayerQuit(org.bukkit.event.player.PlayerQuitEvent event) {
+    getLogger().info("eh: on_player_quit");
+    callJRubyMethodIfExists("on_player_quit", event);
   }
 
 }

@@ -15,6 +15,7 @@ rukkit:
   plugin_dir:
     "file:///Users/momonga/Develops/rukkit/example_plugins/"
   plugins:
+    - say_hello_and_goodbye
     - strong_boots
     - fast_dash
 
