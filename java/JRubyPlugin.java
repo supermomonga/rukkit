@@ -47,20 +47,25 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     }
   }
 
+  private void loadBukkitPlugin(String pluginDir, String plugin) {
+    getLogger().info("Loading plugin: [" + plugin + "]");
+    String pluginPath = pluginDir + plugin + ".rb";
+    try {
+      URL url = new URL(pluginPath);
+      eventHandler = loadJRubyScript(
+          url.openStream(),
+          URLDecoder.decode(url.getPath().toString(), "UTF-8")
+          );
+      getLogger().info("Plugin loaded: [" + plugin + "]");
+    } catch (Exception e) {
+      getLogger().info("Failed to load plugin: [" + plugin + "]");
+      e.printStackTrace();
+    }
+  }
+
   private void loadRukkitPlugins(String pluginDir, List<String> plugins) {
-    for (String pluginName : plugins) {
-      getLogger().info("Loading plugin: [" + pluginName + "]");
-      String pluginPath = pluginDir + pluginName + ".rb";
-      try {
-        URL url = new URL(pluginPath);
-        eventHandler = loadJRubyScript(
-            url.openStream(),
-            URLDecoder.decode(url.getPath().toString(), "UTF-8")
-            );
-      } catch (Exception e) {
-        getLogger().info("Failed to load plugin: [" + pluginName + "]");
-        e.printStackTrace();
-      }
+    for (String plugin : plugins) {
+      loadBukkitPlugin(pluginDir, plugin);
     }
   }
 
