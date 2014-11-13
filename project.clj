@@ -7,4 +7,4 @@
   :repositories {"org.bukkit"
                  "http://repo.bukkit.org/content/groups/public/"}
   :javac-options ["-d" "classes/" "-Xlint:deprecation"]
-  :java-source-paths ["java"])
+  :java-source-paths ["javasrc"])

@@ -13,9 +13,6 @@ aliases:
     - "rukkit $1-"
 rukkit:
   plugin_dir:
-    "file:///Users/momonga/Develops/rukkit/example_plugins/"
+    "file://./user_plugins/"
   plugins:
-    - say_hello_and_goodbye
-    - strong_boots
-    - fast_dash
 
