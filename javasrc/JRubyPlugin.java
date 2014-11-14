@@ -46,7 +46,6 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     if (jruby.callMethod(eventHandler, "respond_to?", method).equals(rubyTrue)) {
       return true;
     } else {
-      getLogger().info("method doesn't exists: " + method);
       return false;
     }
   }
