@@ -83,7 +83,7 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     }
   }
 
-  private void loadBukkitPlugin(String pluginDir, String plugin) {
+  private void loadRukkitPlugin(String pluginDir, String plugin) {
     getLogger().info("Loading plugin: [" + plugin + "]");
     String pluginPath = pluginDir + plugin + ".rb";
     try {
@@ -102,7 +102,7 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
 
   private void loadRukkitPlugins(String pluginDir, List<String> plugins) {
     for (String plugin : plugins) {
-      loadBukkitPlugin(pluginDir, plugin);
+      loadRukkitPlugin(pluginDir, plugin);
     }
   }
 
