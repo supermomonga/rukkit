@@ -69,6 +69,14 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     config = getConfig();
   }
 
+  private Object evalRuby(String script) {
+    try {
+      return jruby.runScriptlet(script);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
   private Object loadJRubyScript(InputStream io, String path) {
     try {
       return jruby.runScriptlet(io, path);
