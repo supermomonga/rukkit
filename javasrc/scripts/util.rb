@@ -13,7 +13,7 @@ module Util
   end
 
   def later(tick, &block)
-    plugin = Bukkit.plugin_manager.plugin("rukkit")
+    plugin = Bukkit.plugin_manager.get_plugin("rukkit")
     Bukkit.scheduler.schedule_sync_delayed_task(plugin, block, tick)
   end
 end
