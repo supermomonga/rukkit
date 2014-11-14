@@ -83,6 +83,28 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     }
   }
 
+  private void loadRukkitScript(String pluginDir, String plugin) {
+    getLogger().info("Loading script: [" + plugin + "]");
+    String pluginPath = pluginDir + plugin + ".rb";
+    try {
+      URL url = new URL(pluginPath);
+      loadJRubyScript(
+          url.openStream(),
+          URLDecoder.decode(url.getPath().toString(), "UTF-8")
+          );
+      getLogger().info("Script loaded: [" + plugin + "]");
+    } catch (Exception e) {
+      getLogger().info("Failed to load script: [" + plugin + "]");
+      e.printStackTrace();
+    }
+  }
+
+  private void loadRukkitScripts(String scriptDir, List<String> scripts) {
+    for (String script : scripts) {
+      loadRukkitScript(scriptDir, script);
+    }
+  }
+
   private void loadRukkitPlugin(String pluginDir, String plugin) {
     getLogger().info("Loading plugin: [" + plugin + "]");
     String pluginPath = pluginDir + plugin + ".rb";
@@ -106,16 +128,16 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     }
   }
 
-  private void loadCorePlugins() {
-    List<String> plugins = new ArrayList<String>();
-    plugins.add("util");
-    /* plugins.add("web"); */
+  private void loadCoreScripts() {
+    List<String> scripts = new ArrayList<String>();
+    scripts.add("util");
+    /* scripts.add("web"); */
 
-    // TODO: Builtin plugins should not be stored in user-defined-plugin dir,
+    // TODO: Builtin scripts should not be stored in user-defined-script dir,
     //       so I want to put them into jar.
-    loadRukkitPlugins(
-        config.getString("rukkit.plugin_dir"),
-        plugins
+    loadRukkitScripts(
+        config.getString("rukkit.script_dir"),
+        scripts
         );
   }
 
@@ -135,7 +157,7 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     initializeJRuby();
     loadConfig();
 
-    loadCorePlugins();
+    loadCoreScripts();
     loadUserPlugins();
     getLogger().info("Rukkit enabled!");
 

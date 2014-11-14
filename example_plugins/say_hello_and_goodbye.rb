@@ -2,7 +2,7 @@
 
 import 'org.bukkit.Bukkit'
 
-module EventHandler
+module SayHelloAndGoodbye
   include_package 'org.bukkit.entity'
   include Util
   extend self
@@ -19,4 +19,4 @@ module EventHandler
 
 end
 
-EventHandler
+SayHelloAndGoodbye
