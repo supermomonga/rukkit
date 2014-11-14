@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.stream.Stream;
 import java.util.stream.Collectors;
 import java.net.URL;
+import java.net.URI;
 import java.nio.file.Paths;
 import java.nio.file.Files;
 import java.io.IOException;
@@ -105,19 +106,24 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
 
   private void loadRukkitScript(String script) {
     getLogger().info("Loading script: [" + script + "]");
-
-    URL url = this.getClass().getResource("scripts/" + script + ".rb");
-    String scriptPath = url.getPath();
-    getLogger().info("Script load: " + scriptPath);
-
+    InputStream is = null;
+    BufferedReader br = null;
     try {
+      is = this.getClass().getClassLoader().getResource("scripts/" + script + ".rb").openStream();
+      br = new BufferedReader(new InputStreamReader(is));
+
       String scriptBuffer =
-        Files.readAllLines(Paths.get(scriptPath)).stream().collect(Collectors.joining("\n"));
+        br.lines().collect(Collectors.joining("\n"));
+
       RubyObject eventHandler = (RubyObject)jruby.runScriptlet(scriptBuffer);
       getLogger().info("Script loaded: [" + script + "]");
+
     } catch (Exception e) {
       getLogger().info("Failed to load script: [" + script + "]");
       e.printStackTrace();
+    } finally {
+      if (is != null) try { is.close(); } catch (IOException e) {}
+      if (br != null) try { br.close(); } catch (IOException e) {}
     }
   }
 
