@@ -1,9 +1,10 @@
 rukkit:
   plugin_dir:
     "/Users/momonga/Develops/rukkit/example_plugins/"
-  script_dir:
-    "/Users/momonga/Develops/rukkit/rubysrc/core/"
   plugins:
     - say_hello_and_goodbye
     - strong_boots
     - fast_dash
+  script_dir:
+    "/Users/momonga/Develops/rukkit/example_scripts/"
+  scripts:

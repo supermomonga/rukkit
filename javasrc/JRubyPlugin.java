@@ -104,7 +104,7 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     }
   }
 
-  private void loadRukkitScript(String script) {
+  private void loadRukkitBundledScript(String script) {
     getLogger().info("Loading script: [" + script + "]");
     InputStream is = null;
     BufferedReader br = null;
@@ -127,9 +127,31 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     }
   }
 
-  private void loadRukkitScripts(List<String> scripts) {
+  private void loadRukkitBundledScripts(List<String> scripts) {
     for (String script : scripts) {
-      loadRukkitScript(script);
+      loadRukkitBundledScript(script);
+    }
+  }
+
+  private void loadRukkitScript(String scriptDir, String script) {
+    getLogger().info("Loading script: [" + script + "]");
+    String scriptPath = scriptDir + script + ".rb";
+    try {
+      // Define module
+      String moduleName = snakeToCamel(script);
+      String scriptBuffer =
+        Files.readAllLines(Paths.get(scriptPath)).stream().collect(Collectors.joining("\n"));
+      jruby.runScriptlet(scriptBuffer);
+      getLogger().info("Script loaded: [" + script + "]");
+    } catch (Exception e) {
+      getLogger().info("Failed to load script: [" + script + "]");
+      e.printStackTrace();
+    }
+  }
+
+  private void loadRukkitScripts(String scriptDir, List<String> scripts) {
+    for (String script : scripts) {
+      loadRukkitScript(scriptDir, script);
     }
   }
 
@@ -160,6 +182,12 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     }
   }
 
+  private void loadRukkitPlugins(String pluginDir, List<String> plugins) {
+    for (String plugin : plugins) {
+      loadRukkitPlugin(pluginDir, plugin);
+    }
+  }
+
   private boolean isModuleDefined(String moduleName) {
     return isDefined(moduleName, "constant");
   }
@@ -174,24 +202,27 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
         ).collect(Collectors.joining(""));
   }
 
-  private void loadRukkitPlugins(String pluginDir, List<String> plugins) {
-    for (String plugin : plugins) {
-      loadRukkitPlugin(pluginDir, plugin);
-    }
-  }
-
   private void loadCoreScripts() {
     List<String> scripts = new ArrayList<String>();
     scripts.add("util");
 
-    loadRukkitScripts( scripts );
+    loadRukkitBundledScripts( scripts );
+  }
+
+  private void loadUserScripts() {
+    if (config.getStringList("rukkit.scripts") != null)
+      loadRukkitScripts(
+          config.getString("rukkit.script_dir"),
+          config.getStringList("rukkit.scripts")
+          );
   }
 
   private void loadUserPlugins() {
-    loadRukkitPlugins(
-        config.getString("rukkit.plugin_dir"),
-        config.getStringList("rukkit.plugins")
-        );
+    if (config.getStringList("rukkit.plugins") != null)
+      loadRukkitPlugins(
+          config.getString("rukkit.plugin_dir"),
+          config.getStringList("rukkit.plugins")
+          );
   }
 
   private void applyEventHandler() {
@@ -204,6 +235,7 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     loadConfig();
 
     loadCoreScripts();
+    loadUserScripts();
     loadUserPlugins();
     getLogger().info("Rukkit enabled!");
 
