@@ -101,9 +101,13 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     }
   }
 
-  private void loadRukkitScript(String scriptDir, String script) {
+  private void loadRukkitScript(String script) {
     getLogger().info("Loading script: [" + script + "]");
-    String scriptPath = scriptDir + script + ".rb";
+    String scriptPath = "scripts/" + script + ".rb";
+
+
+
+
     try {
       loadJRubyScript(
           Files.newInputStream(Paths.get(scriptPath)),
@@ -116,9 +120,9 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     }
   }
 
-  private void loadRukkitScripts(String scriptDir, List<String> scripts) {
+  private void loadRukkitScripts(List<String> scripts) {
     for (String script : scripts) {
-      loadRukkitScript(scriptDir, script);
+      loadRukkitScript(script);
     }
   }
 
@@ -172,14 +176,8 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
   private void loadCoreScripts() {
     List<String> scripts = new ArrayList<String>();
     scripts.add("util");
-    /* scripts.add("web"); */
 
-    // TODO: Builtin scripts should not be stored in user-defined-script dir,
-    //       so I want to put them into jar.
-    loadRukkitScripts(
-        config.getString("rukkit.script_dir"),
-        scripts
-        );
+    loadRukkitScripts( scripts );
   }
 
   private void loadUserPlugins() {
