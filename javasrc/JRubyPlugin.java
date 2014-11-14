@@ -11,6 +11,8 @@ import java.nio.file.Paths;
 import java.nio.file.Files;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
 import java.net.URLDecoder;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.event.Listener;
@@ -103,16 +105,15 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
 
   private void loadRukkitScript(String script) {
     getLogger().info("Loading script: [" + script + "]");
-    String scriptPath = "scripts/" + script + ".rb";
 
-
-
+    URL url = this.getClass().getResource("scripts/" + script + ".rb");
+    String scriptPath = url.getPath();
+    getLogger().info("Script load: " + scriptPath);
 
     try {
-      loadJRubyScript(
-          Files.newInputStream(Paths.get(scriptPath)),
-          scriptPath
-          );
+      String scriptBuffer =
+        Files.readAllLines(Paths.get(scriptPath)).stream().collect(Collectors.joining("\n"));
+      RubyObject eventHandler = (RubyObject)jruby.runScriptlet(scriptBuffer);
       getLogger().info("Script loaded: [" + script + "]");
     } catch (Exception e) {
       getLogger().info("Failed to load script: [" + script + "]");
