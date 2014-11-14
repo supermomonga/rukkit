@@ -161,16 +161,10 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
       String moduleName = snakeToCamel(plugin);
 
       // Add script dir to $LOAD_PATH automatically
-      String builtinScriptsPath =
-        URLDecoder.decode(
-            this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath(),
-            "UTF-8")
-        + "/scripts";
       String userScriptsPath = config.getString("rukkit.script_dir");
       String loadPathStatement = "";
-      loadPathStatement += "$LOAD_PATH.concat ['" + builtinScriptsPath + "']\n";
       if (userScriptsPath != null)
-        loadPathStatement += "$LOAD_PATH.concat ['" + userScriptsPath + "']\n";
+        loadPathStatement = "$LOAD_PATH.concat ['" + userScriptsPath + "']\n";
 
       String pluginBuffer =
         "# encoding: utf-8\n"
