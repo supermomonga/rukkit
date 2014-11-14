@@ -8,7 +8,8 @@ Rukkit(pronounce `ルゥリィァキーッツッッッ！`) is the bukkit plugin
 # How to install
 
 1. がんばる
-2. がんばる
+2. やすむ
+3. がんばる
 
 # How to write Rukkit plugin by JRuby
 
