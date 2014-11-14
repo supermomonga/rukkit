@@ -210,7 +210,8 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
   }
 
   private void loadUserScripts() {
-    if (config.getStringList("rukkit.scripts") != null)
+    if (config.getString("rukkit.script_dir") != null &&
+        config.getStringList("rukkit.scripts") != null)
       loadRukkitScripts(
           config.getString("rukkit.script_dir"),
           config.getStringList("rukkit.scripts")
@@ -218,7 +219,8 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
   }
 
   private void loadUserPlugins() {
-    if (config.getStringList("rukkit.plugins") != null)
+    if (config.getString("rukkit.plugin_dir") != null &&
+        config.getStringList("rukkit.plugins") != null)
       loadRukkitPlugins(
           config.getString("rukkit.plugin_dir"),
           config.getStringList("rukkit.plugins")
