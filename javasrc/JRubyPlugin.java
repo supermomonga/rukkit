@@ -2,6 +2,7 @@ package com.supermomonga.Rukkit;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.net.URL;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,7 +16,7 @@ import org.jruby.embed.ScriptingContainer;
 
 public class JRubyPlugin extends JavaPlugin implements Listener {
   private ScriptingContainer jruby;
-  private Object eventHandler;
+  private HashMap<String, Object> eventHandlers;
   private Object rubyTrue, rubyFalse, rubyNil;
   private FileConfiguration config;
 
@@ -30,7 +31,7 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     rubyNil = jruby.runScriptlet("nil");
   }
 
-  private boolean isRubyMethodExists(String method) {
+  private boolean isRubyMethodExists(Object eventHandler, String method) {
     if (jruby.callMethod(eventHandler, "respond_to?", method).equals(rubyTrue)) {
       return true;
     } else {
@@ -40,23 +41,27 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
   }
 
   private void callJRubyMethodIfExists(String method, Object arg1) {
-    if (isRubyMethodExists(method))
-      jruby.callMethod(eventHandler, method, arg1);
+    for (Object eventHandler : eventHandlers.values())
+      if (isRubyMethodExists(eventHandler, method))
+        jruby.callMethod(eventHandler, method, arg1);
   }
 
   private void callJRubyMethodIfExists(String method, Object arg1, Object arg2) {
-    if (isRubyMethodExists(method))
-      jruby.callMethod(eventHandler, method, arg1, arg2);
+    for (Object eventHandler : eventHandlers.values())
+      if (isRubyMethodExists(eventHandler, method))
+        jruby.callMethod(eventHandler, method, arg1, arg2);
   }
 
   private void callJRubyMethodIfExists(String method, Object arg1, Object arg2, Object arg3) {
-    if (isRubyMethodExists(method))
-      jruby.callMethod(eventHandler, method, arg1, arg2, arg3);
+    for (Object eventHandler : eventHandlers.values())
+      if (isRubyMethodExists(eventHandler, method))
+        jruby.callMethod(eventHandler, method, arg1, arg2, arg3);
   }
 
   private void callJRubyMethodIfExists(String method, Object arg1, Object arg2, Object arg3, Object arg4) {
-    if (isRubyMethodExists(method))
-      jruby.callMethod(eventHandler, method, arg1, arg2, arg3, arg4);
+    for (Object eventHandler : eventHandlers.values())
+      if (isRubyMethodExists(eventHandler, method))
+        jruby.callMethod(eventHandler, method, arg1, arg2, arg3, arg4);
   }
 
 
@@ -83,10 +88,11 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     String pluginPath = pluginDir + plugin + ".rb";
     try {
       URL url = new URL(pluginPath);
-      eventHandler = loadJRubyScript(
+      Object eventHandler = loadJRubyScript(
           url.openStream(),
           URLDecoder.decode(url.getPath().toString(), "UTF-8")
           );
+      eventHandlers.put(plugin, eventHandler);
       getLogger().info("Plugin loaded: [" + plugin + "]");
     } catch (Exception e) {
       getLogger().info("Failed to load plugin: [" + plugin + "]");
