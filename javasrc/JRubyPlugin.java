@@ -16,7 +16,7 @@ import org.jruby.embed.ScriptingContainer;
 
 public class JRubyPlugin extends JavaPlugin implements Listener {
   private ScriptingContainer jruby;
-  private HashMap<String, Object> eventHandlers;
+  private HashMap<String, Object> eventHandlers = new HashMap<String, Object>();
   private Object rubyTrue, rubyFalse, rubyNil;
   private FileConfiguration config;
 
