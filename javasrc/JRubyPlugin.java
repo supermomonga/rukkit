@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.stream.Stream;
 import java.util.stream.Collectors;
 import java.net.URL;
+import java.nio.file.Paths;
+import java.nio.file.Files;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
@@ -15,6 +17,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Event;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.jruby.RubyObject;
 import org.jruby.embed.ScriptingContainer;
 import org.jruby.embed.EvalFailedException;
 
@@ -98,18 +101,17 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     }
   }
 
-  private void loadRukkitScript(String pluginDir, String plugin) {
-    getLogger().info("Loading script: [" + plugin + "]");
-    String pluginPath = pluginDir + plugin + ".rb";
+  private void loadRukkitScript(String scriptDir, String script) {
+    getLogger().info("Loading script: [" + script + "]");
+    String scriptPath = scriptDir + script + ".rb";
     try {
-      URL url = new URL(pluginPath);
       loadJRubyScript(
-          url.openStream(),
-          URLDecoder.decode(url.getPath().toString(), "UTF-8")
+          Files.newInputStream(Paths.get(scriptPath)),
+          scriptPath
           );
-      getLogger().info("Script loaded: [" + plugin + "]");
+      getLogger().info("Script loaded: [" + script + "]");
     } catch (Exception e) {
-      getLogger().info("Failed to load script: [" + plugin + "]");
+      getLogger().info("Failed to load script: [" + script + "]");
       e.printStackTrace();
     }
   }
@@ -125,27 +127,17 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     String pluginPath = pluginDir + plugin + ".rb";
     try {
       // Define module
-      URL url = new URL(pluginPath);
-      Object eventHandler = loadJRubyScript(
-          url.openStream(),
-          URLDecoder.decode(url.getPath().toString(), "UTF-8")
-          );
-
-      // Find module
       String moduleName = snakeToCamel(plugin);
-      getLogger().info("Finding module: [" + moduleName + "]");
-      /* Object module = evalRuby("begin " + moduleName + ";rescue NameError;nil end"); */
-      Object module;
-      if (isModuleDefined(moduleName)) {
-        module = jruby.runScriptlet(moduleName);
-      } else {
-        module = rubyNil;
-      }
-      if(module == null)
-        getLogger().info("nil desu yo");
+      String pluginBuffer =
+        Files.readAllLines(Paths.get(pluginPath)).stream().collect(Collectors.joining("\n"))
+        + "\n"
+        + "nil.tap{\n"
+        +   "break " + moduleName + " if defined? " + moduleName + "\n"
+        + "}";
+      RubyObject eventHandler = (RubyObject)jruby.runScriptlet(pluginBuffer);
 
       // Add Module to event handler list
-      if (module.getClass() == rubyModule) {
+      if (eventHandler != rubyNil && eventHandler.getType() == rubyModule) {
         eventHandlers.put(plugin, eventHandler);
         getLogger().info("Plugin loaded: [" + plugin + "]");
       } else {
