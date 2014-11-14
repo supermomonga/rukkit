@@ -230,5 +230,9 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     getLogger().info("eh: on_player_quit");
     callJRubyMethodIfExists("on_player_quit", event);
   }
-
+  @EventHandler
+  public void onPlayerToggleSprint(org.bukkit.event.player.PlayerToggleSprintEvent event) {
+    getLogger().info("eh: on_player_toggle_sprint");
+    callJRubyMethodIfExists("on_player_toggle_sprint", event);
+  }
 }
