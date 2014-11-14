@@ -2,7 +2,10 @@ package com.supermomonga.Rukkit;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.stream.Stream;
+import java.util.stream.Collectors;
 import java.net.URL;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,11 +16,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Event;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jruby.embed.ScriptingContainer;
+import org.jruby.embed.EvalFailedException;
 
 public class JRubyPlugin extends JavaPlugin implements Listener {
   private ScriptingContainer jruby;
   private HashMap<String, Object> eventHandlers = new HashMap<String, Object>();
-  private Object rubyTrue, rubyFalse, rubyNil;
+  private Object rubyTrue, rubyFalse, rubyNil, rubyModule;
   private FileConfiguration config;
 
   private void initializeJRuby() {
@@ -29,6 +33,7 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     rubyTrue = jruby.runScriptlet("true");
     rubyFalse = jruby.runScriptlet("false");
     rubyNil = jruby.runScriptlet("nil");
+    rubyModule = jruby.runScriptlet("Module");
   }
 
   private boolean isRubyMethodExists(Object eventHandler, String method) {
@@ -72,8 +77,10 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
   private Object evalRuby(String script) {
     try {
       return jruby.runScriptlet(script);
-    } catch (IOException e) {
-      e.printStackTrace();
+    } catch (EvalFailedException e) {
+      return rubyNil;
+    } finally {
+      return rubyNil;
     }
   }
 
@@ -117,17 +124,35 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     getLogger().info("Loading plugin: [" + plugin + "]");
     String pluginPath = pluginDir + plugin + ".rb";
     try {
+      // Define module
       URL url = new URL(pluginPath);
       Object eventHandler = loadJRubyScript(
           url.openStream(),
           URLDecoder.decode(url.getPath().toString(), "UTF-8")
           );
-      eventHandlers.put(plugin, eventHandler);
-      getLogger().info("Plugin loaded: [" + plugin + "]");
+
+      // Find module
+      String moduleName = snakeToCamel(plugin);
+      getLogger().info("Finding module: [" + moduleName + "]");
+      Object module = evalRuby("begin " + moduleName + ";rescue NameError;nil end");
+
+      // Add Module to event handler list
+      if (module.getClass() == rubyModule) {
+        eventHandlers.put(plugin, eventHandler);
+        getLogger().info("Plugin loaded: [" + plugin + "]");
+      } else {
+        getLogger().info("Plugin loaded but module not defined: [" + plugin + "]");
+      }
     } catch (Exception e) {
       getLogger().info("Failed to load plugin: [" + plugin + "]");
       e.printStackTrace();
     }
+  }
+
+  private String snakeToCamel(String snake) {
+    return Arrays.asList(snake.split("_")).stream().map(
+        w -> w.substring(0,1).toUpperCase() + w.substring(1)
+        ).collect(Collectors.joining(""));
   }
 
   private void loadRukkitPlugins(String pluginDir, List<String> plugins) {
