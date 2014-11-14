@@ -134,7 +134,15 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
       // Find module
       String moduleName = snakeToCamel(plugin);
       getLogger().info("Finding module: [" + moduleName + "]");
-      Object module = evalRuby("begin " + moduleName + ";rescue NameError;nil end");
+      /* Object module = evalRuby("begin " + moduleName + ";rescue NameError;nil end"); */
+      Object module;
+      if (isModuleDefined(moduleName)) {
+        module = jruby.runScriptlet(moduleName);
+      } else {
+        module = rubyNil;
+      }
+      if(module == null)
+        getLogger().info("nil desu yo");
 
       // Add Module to event handler list
       if (module.getClass() == rubyModule) {
@@ -147,6 +155,14 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
       getLogger().info("Failed to load plugin: [" + plugin + "]");
       e.printStackTrace();
     }
+  }
+
+  private boolean isModuleDefined(String moduleName) {
+    return isDefined(moduleName, "constant");
+  }
+
+  private boolean isDefined(String objectName, String type) {
+    return type.equals(jruby.runScriptlet("defined? " + objectName));
   }
 
   private String snakeToCamel(String snake) {
