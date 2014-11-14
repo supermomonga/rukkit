@@ -158,10 +158,24 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     getLogger().info("Loading plugin: [" + plugin + "]");
     String pluginPath = pluginDir + plugin + ".rb";
     try {
-      // Define module
       String moduleName = snakeToCamel(plugin);
+
+      // Add script dir to $LOAD_PATH automatically
+      String builtinScriptsPath =
+        URLDecoder.decode(
+            this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath(),
+            "UTF-8")
+        + "/scripts";
+      String userScriptsPath = config.getString("rukkit.script_dir");
+      String loadPathStatement = "";
+      loadPathStatement += "$LOAD_PATH.concat ['" + builtinScriptsPath + "']\n";
+      if (userScriptsPath != null)
+        loadPathStatement += "$LOAD_PATH.concat ['" + userScriptsPath + "']\n";
+
       String pluginBuffer =
-        Files.readAllLines(Paths.get(pluginPath)).stream().collect(Collectors.joining("\n"))
+        "# encoding: utf-8\n"
+        + loadPathStatement
+        + Files.readAllLines(Paths.get(pluginPath)).stream().collect(Collectors.joining("\n"))
         + "\n"
         + "nil.tap{\n"
         +   "break " + moduleName + " if defined? " + moduleName + "\n"

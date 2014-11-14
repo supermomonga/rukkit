@@ -1,19 +1,23 @@
 # encoding: utf-8
 import 'org.bukkit.Bukkit'
 
-module Util
-  extend self
+module Rukkit
 
-  def broadcast(*messages)
-    Bukkit.server.broadcast_message messages.join
-  end
+  refine Bukkit::Util do
+    extend self
 
-  def sec(n)
-    (n * 20).to_i
-  end
+    def broadcast(*messages)
+      Bukkit.server.broadcast_message messages.join
+    end
 
-  def later(tick, &block)
-    plugin = Bukkit.plugin_manager.get_plugin("rukkit")
-    Bukkit.scheduler.schedule_sync_delayed_task(plugin, block, tick)
+    def sec(n)
+      (n * 20).to_i
+    end
+
+    def later(tick, &block)
+      plugin = Bukkit.plugin_manager.get_plugin("rukkit")
+      Bukkit.scheduler.schedule_sync_delayed_task(plugin, block, tick)
+    end
+
   end
 end
