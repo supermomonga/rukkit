@@ -21,5 +21,14 @@ module Rukkit
       Bukkit.scheduler.schedule_sync_delayed_task(plugin, block, tick)
     end
 
+    def block_below(block)
+      add_loc(block.location, 0, -1, 0).block
+    end
+
+    def add_loc(loc, x, y, z)
+      l = loc.dup
+      l.add(x, y, z)
+      l
+    end
   end
 end
