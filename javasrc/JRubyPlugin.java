@@ -171,12 +171,8 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
       String resourceLoader =
         "import 'com.supermomonga.rukkit.Loader'" +
         "def require_resource(name)" +
-        "  begin" +
-        "    buffer = Loader.new.get_resource_as_string %`#{name}.rb`" +
-        "    eval buffer unless buffer.nil?" +
-        "  rescue Exception => e" +
-        "    p e" +
-        "  end" +
+        "  buffer = Loader.new.get_resource_as_string %`#{name}.rb`" +
+        "  eval buffer unless buffer.nil?" +
         "end"
 
       String pluginBuffer =
