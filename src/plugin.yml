@@ -1,5 +1,5 @@
 name: rukkit
-main: com.supermomonga.Rukkit.JRubyPlugin
+main: com.supermomonga.rukkit.JRubyPlugin
 version: 1.0.0
 website: http://blog.supermomonga.com/
 author: supermomonga

@@ -2,14 +2,9 @@
 
 import 'org.bukkit.Bukkit'
 
-$LOAD_PATH.each do |path|
-  puts "LOAD PATH: #{path}"
-end
+require_resource 'scripts/util'
 
-puts File.exists? "/Users/momonga/Develops/bukkit/plugins/rukkit.jar/scripts/util.rb"
-
-require './util'
-
+using Rukkit
 module SayHelloAndGoodbye
   include_package 'org.bukkit.entity'
   include Util

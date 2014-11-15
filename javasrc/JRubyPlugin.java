@@ -1,4 +1,4 @@
-package com.supermomonga.Rukkit;
+package com.supermomonga.rukkit;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -23,6 +23,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.jruby.RubyObject;
 import org.jruby.embed.ScriptingContainer;
 import org.jruby.embed.EvalFailedException;
+
 
 public class JRubyPlugin extends JavaPlugin implements Listener {
   private ScriptingContainer jruby;
@@ -164,11 +165,24 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
       String userScriptsPath = config.getString("rukkit.script_dir");
       String loadPathStatement = "";
       if (userScriptsPath != null)
-        loadPathStatement = "$LOAD_PATH.concat ['" + userScriptsPath + "']\n";
+        loadPathStatement = "$LOAD_PATH << '" + userScriptsPath + "'\n";
+
+      // Add resource ruby loader
+      String resourceLoader =
+        "import 'com.supermomonga.rukkit.Loader'" +
+        "def require_resource(name)" +
+        "  begin" +
+        "    buffer = Loader.new.get_resource_as_string %`#{name}.rb`" +
+        "    eval buffer unless buffer.nil?" +
+        "  rescue Exception => e" +
+        "    p e" +
+        "  end" +
+        "end"
 
       String pluginBuffer =
         "# encoding: utf-8\n"
         + loadPathStatement
+        + resourceLoader
         + Files.readAllLines(Paths.get(pluginPath)).stream().collect(Collectors.joining("\n"))
         + "\n"
         + "nil.tap{\n"
