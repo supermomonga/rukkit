@@ -3,7 +3,7 @@
 require_resource 'scripts/util'
 
 module SayHelloAndGoodbye
-  # include_package 'org.bukkit.entity'
+  include_package 'org.bukkit.entity'
   extend self
 
   def on_player_join(evt)
