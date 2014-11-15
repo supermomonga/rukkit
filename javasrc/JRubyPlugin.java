@@ -169,11 +169,11 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
 
       // Add resource ruby loader
       String resourceLoader =
-        "import 'com.supermomonga.rukkit.Loader'" +
-        "def require_resource(name)" +
-        "  buffer = Loader.new.get_resource_as_string %`#{name}.rb`" +
-        "  eval buffer unless buffer.nil?" +
-        "end"
+        "import 'com.supermomonga.rukkit.Loader'\n" +
+        "def require_resource(name)\n" +
+        "  buffer = Loader.new.get_resource_as_string %`#{name}.rb`\n" +
+        "  eval buffer unless buffer.nil?\n" +
+        "end\n";
 
       String pluginBuffer =
         "# encoding: utf-8\n"
@@ -184,6 +184,7 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
         + "nil.tap{\n"
         +   "break " + moduleName + " if defined? " + moduleName + "\n"
         + "}";
+      /* getLogger().info(pluginBuffer); */
       RubyObject eventHandler = (RubyObject)jruby.runScriptlet(pluginBuffer);
 
       // Add Module to event handler list

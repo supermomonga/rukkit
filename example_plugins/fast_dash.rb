@@ -3,7 +3,7 @@ import 'org.bukkit.entity.Squid'
 import 'org.bukkit.Material'
 
 module FastDash
-  include Util
+  # include Util
   extend self
 
   def on_player_toggle_sprint(evt)
