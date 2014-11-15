@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 require 'java'
-import org.bukkit.Bukkit
+import 'org.bukkit.Bukkit'
 
 module Rukkit
   module Util
