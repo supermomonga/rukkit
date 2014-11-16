@@ -268,6 +268,7 @@ module Lingr
     /^い$/ => 'I',
     /^あ$/ => 'a',
     /^べ$/ => 'be',
+    /^ちめ$/ => 'time',
   }
 
   class Message
