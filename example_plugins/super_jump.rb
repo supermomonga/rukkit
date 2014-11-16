@@ -27,10 +27,4 @@ module SuperJump
       end
     end
   end
-
-  # TODO move it to Util
-  def jfloat(rubyfloat)
-    rubyfloat.to_java Java.float
-  end
-  private :jfloat
 end

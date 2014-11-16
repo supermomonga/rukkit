@@ -31,12 +31,19 @@ module Rukkit
       l
     end
 
+    def play_sound(loc, sound, volume, pitch)
+      loc.world.play_sound(loc, sound, jfloat(volume), jfloat(pitch))
+    end
+
+    def jfloat(rubyfloat)
+      rubyfloat.to_java Java.float
+    end
+
     def plugin_config(key, type = :string)
       config_path = "rukkit.plugin_config.#{key}"
       method = "get_#{type}"
       config = Bukkit.plugin_manager.get_plugin('rukkit').config
       config.send method, config_path
     end
-
   end
 end
