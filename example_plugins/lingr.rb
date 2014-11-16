@@ -282,6 +282,7 @@ module Lingr
   end
 
   extend self
+  extend Rukkit::Util
 
   def post_to_lingr(channel, message)
     bot = Rukkit::Util.plugin_config 'lingr.bot'
