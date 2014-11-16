@@ -48,10 +48,8 @@ module Lingr
 
   def on_async_player_chat(evt)
     player = evt.player
-
+    evt.message = CONVERSION_TABLE.inject(evt.message) {|memo, (k, v)| memo.gsub(k, v) }
     message = Message.new player.name, evt.message
-    message = CONVERSION_TABLE.inject {|memo, (k, v)| memo.gsub(k, v) }
-    evt.message = message
 
     text = "[#{message.name}] #{message.message}"
 
