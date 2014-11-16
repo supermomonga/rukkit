@@ -259,7 +259,6 @@ module Lingr
     i: 'い',
     :'-' => 'ー',
     n: 'ん',
-    m: 'ん',
     a: 'あ',
   }
   CONVERSION_TABLE = {
@@ -309,7 +308,10 @@ module Lingr
 
     message_texts = evt.message.split
     evt.message = message_texts.map{|message_text|
-      converted_text = ROMAJI_CONVERSION_TABLE.inject(message_text) {|acc, (k, v)| acc.gsub(k.to_s, v) }
+      converted_text = ROMAJI_CONVERSION_TABLE.each_with_object(message_text) {|(k, v), acc|
+        acc.gsub! /m([bmp])/, 'n\1'
+        acc.gsub! k.to_s, v
+      }
       if converted_text =~ /\w/
         message_text
       else
