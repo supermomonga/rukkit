@@ -50,7 +50,7 @@ module Lingr
     player = evt.player
 
     message = Message.new player.name, evt.message
-    message = CONV_TABLE.inject {|memo, (k, v)| memo.gsub(k, v) }
+    message = CONVERSION_TABLE.inject {|memo, (k, v)| memo.gsub(k, v) }
     evt.message = message
 
     text = "[#{message.name}] #{message.message}"
