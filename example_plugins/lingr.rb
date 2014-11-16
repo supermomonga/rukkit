@@ -6,6 +6,12 @@ require 'json'
 require_resource 'scripts/util'
 
 module Lingr
+  CONVERSION_TABLE = {
+    /benri/ => '便利',
+    /[fh]u[bv]en/ => '不便',
+    /ribensei/ => '利便性',
+  }
+
   class Message
     attr_reader :name, :message
 
@@ -44,6 +50,9 @@ module Lingr
     player = evt.player
 
     message = Message.new player.name, evt.message
+    message = CONV_TABLE.inject {|memo, (k, v)| memo.gsub(k, v) }
+    evt.message = message
+
     text = "[#{message.name}] #{message.message}"
 
     channel = Rukkit::Util.plugin_config 'lingr.channel'
