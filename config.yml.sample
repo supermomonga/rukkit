@@ -5,6 +5,8 @@ rukkit:
     - say_hello_and_goodbye
     - strong_boots
     - fast_dash
+    - lingr
   script_dir:
     "/Users/momonga/Develops/rukkit/example_scripts/"
   scripts:
+  plugin_config:

@@ -175,21 +175,10 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
         "  eval buffer unless buffer.nil?\n" +
         "end\n";
 
-      // Add config manager
-      String configManager =
-        "import 'com.supermomonga.rukkit.RukkitConfig'\n" +
-        "def config_as_string(key)\n" +
-        "  RukkitConfig.new.get_string name\n" +
-        "end\n" +
-        "def config_as_string_list(key)\n" +
-        "  RukkitConfig.new.get_string_list name\n" +
-        "end\n";
-
       String pluginBuffer =
         "# encoding: utf-8\n"
         + loadPathStatement
         + resourceLoader
-        + configManager
         + Files.readAllLines(Paths.get(pluginPath)).stream().collect(Collectors.joining("\n"))
         + "\n"
         + "nil.tap{\n"

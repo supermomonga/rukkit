@@ -30,5 +30,15 @@ module Rukkit
       l.add(x, y, z)
       l
     end
+
+    def plugin_config(key, type = :string)
+      def config_as_string(key)
+        config_path = "rukkit.plugin_config.#{key}"
+        method = "get_#{type}"
+        config = Bukkit.plugin_manager.get_plugin('rukkit')
+        config.send method, config_path
+      end
+    end
+
   end
 end
