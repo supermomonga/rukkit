@@ -14,6 +14,9 @@ module Dummy
 
 
   def on_command(sender, command, label, args)
-    p sender, command, label, args
+    case label
+    when 'rukkit'
+      p sender, command, args.to_a
+    end
   end
 end
