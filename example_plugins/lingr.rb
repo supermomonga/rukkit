@@ -269,7 +269,8 @@ module Lingr
     /^あ$/ => 'a',
     /^べ$/ => 'be',
     /^ちめ$/ => 'time',
-  }
+    /^thx/ => '誠にありがたく想い存じあげます',
+    /^yw/ => 'いえいえ、情けは人のためならず、という諺がありますゆえ'}
 
   class Message
     attr_reader :name, :message
