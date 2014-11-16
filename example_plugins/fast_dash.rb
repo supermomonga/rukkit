@@ -6,7 +6,6 @@ module FastDash
   extend self
 
   def on_player_toggle_sprint(evt)
-    puts "fast_dash toggle_spring #{evt}"
     return if evt.player.passenger && Squid === evt.player.passenger
     if evt.sprinting? && !evt.player.passenger
       if evt.player.location.clone.add(0, -1, 0).block.type == Material::SAND

@@ -3,6 +3,8 @@ require_resource 'scripts/util'
 
 module SuperJump
   def on_player_toggle_sneak(evt)
+    puts "fast_dash toggle_spring #{evt}"
+
     player = evt.player
     return unless %w[world world_nether].include?(player.location.world.name)
 
@@ -29,4 +31,5 @@ module SuperJump
   def jfloat(rubyfloat)
     rubyfloat.to_java Java.float
   end
+  private :jfloat
 end
