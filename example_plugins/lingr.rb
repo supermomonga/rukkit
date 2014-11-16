@@ -285,13 +285,13 @@ module Lingr
   extend self
   extend Rukkit::Util
 
-  def post_to_lingr(channel, message)
+  def post_to_lingr(room, message)
     bot = Rukkit::Util.plugin_config 'lingr.bot'
     secret = Rukkit::Util.plugin_config 'lingr.secret'
     verifier = Digest::SHA1.hexdigest(bot + secret)
 
     params = {
-      room: channel,
+      room: room,
       bot: bot,
       text: message,
       bot_verifier: verifier
@@ -331,8 +331,8 @@ module Lingr
 
     text = "[#{message.name}] #{message.message}"
 
-    channel = Rukkit::Util.plugin_config 'lingr.channel'
-    post_to_lingr channel, text
+    room = Rukkit::Util.plugin_config 'lingr.room'
+    post_to_lingr room, text
   end
 
   def on_entity_death(evt)
@@ -341,9 +341,9 @@ module Lingr
 
     case player
     when Player
-      channel = Rukkit::Util.plugin_config 'lingr.channel'
+      room = Rukkit::Util.plugin_config 'lingr.room'
       msg = "#{player.name} killed a #{entity.type ? entity.type.name.downcase : entity.inspect}"
-      post_to_lingr channel, msg
+      post_to_lingr room, msg
       broadcast msg
     end
   end
