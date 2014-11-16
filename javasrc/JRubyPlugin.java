@@ -277,6 +277,7 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
   // TODO: I want to generate all event handler mappings automatically,
   //       but it must be painful to parse JavaDoc...
   //       @ujm says that "use jruby repl and ruby reflection to list them up."
+  // TODO: Following eventhandlers are copied from mckokoro source, so it might be not a latest handlers.
   @EventHandler
   public void onAsyncPlayerPreLogin(org.bukkit.event.player.AsyncPlayerPreLoginEvent event) {
     callJRubyMethodIfExists("on_async_player_pre_login", event);
