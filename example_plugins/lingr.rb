@@ -331,6 +331,11 @@ module Lingr
 
     channel = Rukkit::Util.plugin_config 'lingr.channel'
     post_to_lingr channel, text
+  end
 
+  def on_entity_death(evt)
+    entity = evt.entity
+    player = entity.killer
+    post_to_lingr "#{player.name} killed a #{entity.type.name.downcase}"
   end
 end
