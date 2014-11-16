@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 
-public class Loader {
+public class RukkitLoader {
 
   public String getResourceAsString(String path) {
     String scriptBuffer = "";

@@ -169,9 +169,9 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
 
       // Add resource ruby loader
       String resourceLoader =
-        "import 'com.supermomonga.rukkit.Loader'\n" +
+        "import 'com.supermomonga.rukkit.RukkitLoader'\n" +
         "def require_resource(name)\n" +
-        "  buffer = Loader.new.get_resource_as_string %`#{name}.rb`\n" +
+        "  buffer = RukkitLoader.new.get_resource_as_string %`#{name}.rb`\n" +
         "  eval buffer unless buffer.nil?\n" +
         "end\n";
 
