@@ -20,10 +20,10 @@ module SuperJump
         @crouching_counter[name] -= 1
       end
       if @crouching_counter[name] == 3
-        play_sound(add_loc(player.location, 0, 5, 0), Sound::BAT_TAKEOFF, 1.0, 0.0)
+        play_sound(add_loc(player.location, 0, 5, 0), Sound::BAT_TAKEOFF, 0.9, 0.0)
         # evt.player.send_message "superjump!"
         player.fall_distance = 0.0
-        player.velocity = player.velocity.tap {|v| v.set_y jfloat(1.4) }
+        player.velocity = player.velocity.tap {|v| v.set_y jfloat(1.3) }
       end
     end
   end
