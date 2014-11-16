@@ -303,8 +303,17 @@ module Lingr
 
   def on_async_player_chat(evt)
     player = evt.player
-    evt.message = CONVERSION_TABLE.inject(evt.message) {|memo, (k, v)| memo.gsub(k, v) }
-    evt.message = ROMAJI_CONVERSION_TABLE.inject(evt.message) {|memo, (k, v)| memo.gsub(k.to_s, v) }
+
+    message_texts = evt.message.split
+    eve.message = message_texts.map{|message_text|
+      converted_text = CONVERSION_TABLE.inject(message_text) {|acc, (k, v)| acc.gsub(k, v) }
+      converted_text = ROMAJI_CONVERSION_TABLE.inject(converted_text) {|acc, (k, v)| acc.gsub(k.to_s, v) }
+      if converted_text =~ /\w/
+        message_text
+      else
+        converted_text
+      end
+    }.join ' '
     message = Message.new player.name, evt.message
 
     text = "[#{message.name}] #{message.message}"
