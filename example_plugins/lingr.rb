@@ -338,6 +338,8 @@ module Lingr
     player = entity.killer
 
     channel = Rukkit::Util.plugin_config 'lingr.channel'
-    post_to_lingr channel, "#{player.name} killed a #{entity.type.name.downcase}"
+    msg = "#{player.name} killed a #{entity.type.name.downcase}"
+    post_to_lingr channel, msg
+    broadcast msg
   end
 end
