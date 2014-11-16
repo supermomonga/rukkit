@@ -13,7 +13,7 @@ module SuperJump
     if evt.sneaking?
       # counting up
       @crouching_counter[name] += 1
-      Rukkit::Uti.later Rukkit::Uti.sec(2.0) do
+      Rukkit::Util.later Rukkit::Util.sec(2.0) do
         @crouching_counter[name] -= 1
       end
       if @crouching_counter[name] == 4
