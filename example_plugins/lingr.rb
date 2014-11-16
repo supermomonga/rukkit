@@ -305,7 +305,7 @@ module Lingr
     player = evt.player
 
     message_texts = evt.message.split
-    eve.message = message_texts.map{|message_text|
+    evt.message = message_texts.map{|message_text|
       converted_text = CONVERSION_TABLE.inject(message_text) {|acc, (k, v)| acc.gsub(k, v) }
       converted_text = ROMAJI_CONVERSION_TABLE.inject(converted_text) {|acc, (k, v)| acc.gsub(k.to_s, v) }
       if converted_text =~ /\w/
