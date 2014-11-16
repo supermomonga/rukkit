@@ -16,10 +16,10 @@ module SuperJump
     if evt.sneaking?
       # counting up
       @crouching_counter[name] += 1
-      later sec(2.0) do
+      later sec(1.5) do
         @crouching_counter[name] -= 1
       end
-      if @crouching_counter[name] == 4
+      if @crouching_counter[name] == 3
         play_sound(add_loc(player.location, 0, 5, 0), Sound::BAT_TAKEOFF, 1.0, 0.0)
         # evt.player.send_message "superjump!"
         player.fall_distance = 0.0
