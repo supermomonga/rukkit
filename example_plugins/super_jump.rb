@@ -2,6 +2,8 @@ import 'org.bukkit.Sound'
 require_resource 'scripts/util'
 
 module SuperJump
+  extend self
+
   def on_player_toggle_sneak(evt)
     puts "super_jump toggle_sneak #{evt}"
 
