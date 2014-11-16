@@ -262,9 +262,9 @@ module Lingr
     a: 'あ',
   }
   CONVERSION_TABLE = {
-    /benri/ => '便利',
-    /[fh]u[bv]en/ => '不便',
-    /ribensei/ => '利便性',
+    /べんり/ => '便利',
+    /ふべん/ => '不便',
+    /^ひ$/ => 'hi',
   }
 
   class Message
@@ -306,13 +306,14 @@ module Lingr
 
     message_texts = evt.message.split
     evt.message = message_texts.map{|message_text|
-      converted_text = CONVERSION_TABLE.inject(message_text) {|acc, (k, v)| acc.gsub(k, v) }
-      converted_text = ROMAJI_CONVERSION_TABLE.inject(converted_text) {|acc, (k, v)| acc.gsub(k.to_s, v) }
+      converted_text = ROMAJI_CONVERSION_TABLE.inject(message_text) {|acc, (k, v)| acc.gsub(k.to_s, v) }
       if converted_text =~ /\w/
         message_text
       else
         converted_text
       end
+    }.map{|message_text|
+      CONVERSION_TABLE.inject(message_text) {|acc, (k, v)| acc.gsub(k, v) }
     }.join ' '
     message = Message.new player.name, evt.message
 
