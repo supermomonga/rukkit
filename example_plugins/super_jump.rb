@@ -3,7 +3,7 @@ require_resource 'scripts/util'
 
 module SuperJump
   def on_player_toggle_sneak(evt)
-    puts "fast_dash toggle_spring #{evt}"
+    puts "super_jump toggle_sneak #{evt}"
 
     player = evt.player
     return unless %w[world world_nether].include?(player.location.world.name)
