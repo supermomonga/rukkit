@@ -3,6 +3,7 @@ require_resource 'scripts/util'
 
 module SuperJump
   extend self
+  extend Rukkit::Util
 
   def on_player_toggle_sneak(evt)
     player = evt.player
@@ -15,7 +16,7 @@ module SuperJump
     if evt.sneaking?
       # counting up
       @crouching_counter[name] += 1
-      Rukkit::Util.later Rukkit::Util.sec(2.0) do
+      later sec(2.0) do
         @crouching_counter[name] -= 1
       end
       if @crouching_counter[name] == 4
