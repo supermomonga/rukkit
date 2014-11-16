@@ -1,5 +1,3 @@
-
-require 'set'
 require 'digest/sha1'
 require 'erb'
 require 'open-uri'
@@ -8,7 +6,6 @@ require 'json'
 require_resource 'scripts/util'
 
 module Lingr
-
   class Message
     attr_reader :name, :message
 
@@ -53,5 +50,4 @@ module Lingr
     post_to_lingr channel, text
 
   end
-
 end
