@@ -308,7 +308,7 @@ module Lingr
 
     message_texts = evt.message.split
     evt.message = message_texts.map{|message_text|
-      converted_text = ROMAJI_CONVERSION_TABLE.each_with_object(message_text) {|(k, v), acc|
+      converted_text = ROMAJI_CONVERSION_TABLE.each_with_object(message_text.dup) {|(k, v), acc|
         acc.gsub! /m([bmp])/, 'n\1'
         acc.gsub! k.to_s, v
       }
