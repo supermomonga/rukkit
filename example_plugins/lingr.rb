@@ -4,6 +4,7 @@ require 'open-uri'
 require 'json'
 
 require_resource 'scripts/util'
+import 'org.bukkit.entity.Player'
 
 module Lingr
   ROMAJI_CONVERSION_TABLE = {
@@ -338,9 +339,12 @@ module Lingr
     entity = evt.entity
     player = entity.killer
 
-    channel = Rukkit::Util.plugin_config 'lingr.channel'
-    msg = "#{player.name} killed a #{entity.type ? entity.type.name.downcase : entity.inspect}"
-    post_to_lingr channel, msg
-    broadcast msg
+    case player
+    when Player
+      channel = Rukkit::Util.plugin_config 'lingr.channel'
+      msg = "#{player.name} killed a #{entity.type ? entity.type.name.downcase : entity.inspect}"
+      post_to_lingr channel, msg
+      broadcast msg
+    end
   end
 end
