@@ -259,6 +259,7 @@ module Lingr
     i: 'い',
     :'-' => 'ー',
     n: 'ん',
+    m: 'ん',
     a: 'あ',
   }
   CONVERSION_TABLE = {
