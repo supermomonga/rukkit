@@ -267,6 +267,7 @@ module Lingr
     /^ひ$/ => 'hi',
     /^い$/ => 'I',
     /^あ$/ => 'a',
+    /^べ$/ => 'be',
   }
 
   class Message
