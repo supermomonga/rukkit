@@ -6,6 +6,7 @@ rukkit:
     - strong_boots
     - fast_dash
     - lingr
+    - super_jump
   script_dir:
     "/Users/momonga/Develops/rukkit/example_scripts/"
   scripts:
