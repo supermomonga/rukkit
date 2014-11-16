@@ -11,4 +11,9 @@ module Dummy
   #     play_sound(add_loc(player.location, 0, 5, 0), Sound.values.to_a.sample, 1.0, 0.0)
   #   end
   # end
+
+
+  def on_command(sender, command, label, args)
+    p sender, command, label, args
+  end
 end
