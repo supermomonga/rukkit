@@ -27,4 +27,18 @@ module SuperJump
       end
     end
   end
+
+    def add_loc(loc, x, y, z)
+      l = loc.dup
+      l.add(x, y, z)
+      l
+    end
+
+    def play_sound(loc, sound, volume, pitch)
+      loc.world.play_sound(loc, sound, jfloat(volume), jfloat(pitch))
+    end
+
+    def jfloat(rubyfloat)
+      rubyfloat.to_java Java.float
+    end
 end
