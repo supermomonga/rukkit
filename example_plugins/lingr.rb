@@ -38,7 +38,9 @@ module Lingr
       "#{key}=#{value}"
     }.join "&"
 
-    open "http://lingr.com/api/room/say?#{query_string}"
+    Thread.start do
+      open "http://lingr.com/api/room/say?#{query_string}"
+    end
   end
 
   def on_async_player_chat(evt)
