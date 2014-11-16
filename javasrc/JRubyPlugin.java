@@ -192,10 +192,10 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
         eventHandlers.put(plugin, eventHandler);
         getLogger().info("Plugin loaded: [" + plugin + "]");
       } else {
-        getLogger().info("Plugin loaded but module not defined: [" + plugin + "]");
+        getLogger().warning("Plugin loaded but module not defined: [" + plugin + "]");
       }
     } catch (Exception e) {
-      getLogger().info("Failed to load plugin: [" + plugin + "]");
+      getLogger().warning("Failed to load plugin: [" + plugin + "]");
       e.printStackTrace();
     }
   }
