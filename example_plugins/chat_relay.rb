@@ -112,30 +112,6 @@ module ChatRelay
   end
 
   extend self
-  extend Rukkit::Util
-
-  def post_to_lingr(room, message)
-    bot = Rukkit::Util.plugin_config 'lingr.bot'
-    secret = Rukkit::Util.plugin_config 'lingr.secret'
-    verifier = Digest::SHA1.hexdigest(bot + secret)
-
-    params = {
-      room: room,
-      bot: bot,
-      text: message,
-      bot_verifier: verifier
-    }
-
-    query_string = params.map{|k,v|
-      key = ERB::Util.url_encode k.to_s
-      value = ERB::Util.url_encode v.to_s
-      "#{key}=#{value}"
-    }.join "&"
-
-    Thread.start do
-      open "http://lingr.com/api/room/say?#{query_string}"
-    end
-  end
 
   def on_async_player_chat(evt)
     player = evt.player
@@ -160,8 +136,7 @@ module ChatRelay
 
     text = "[#{message.name}] #{message.message}"
 
-    room = Rukkit::Util.plugin_config 'lingr.room'
-    post_to_lingr room, text
+    Lingr.post_to_lingr text
   end
 
   def on_entity_death(evt)
@@ -170,9 +145,8 @@ module ChatRelay
 
     case player
     when Player
-      room = Rukkit::Util.plugin_config 'lingr.room'
       msg = "#{player.name} killed a #{entity.type ? entity.type.name.downcase : entity.inspect}"
-      post_to_lingr room, msg
+      Lingr.post_to_lingr msg
       broadcast msg
     end
   end
