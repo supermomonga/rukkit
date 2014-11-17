@@ -16,7 +16,11 @@ module Dummy
     args = args.to_a
     case [label, args.shift]
     when ['rukkit', 'update']
-      log.info('rukkit update')
+      unless args.empty?
+        log.warn('rukkit update with argument is invalid')
+        return
+      end
+
       p :update, sender, command, args
     else
       p :else, sender, command, args
