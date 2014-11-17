@@ -5,10 +5,11 @@ rukkit:
     - say_hello_and_goodbye
     - strong_boots
     - fast_dash
-    - lingr
+    - chat_relay
     - super_jump
     - dummy
   script_dir:
     "/Users/momonga/Develops/rukkit/example_scripts/"
   scripts:
+    - lingr
   plugin_config:
