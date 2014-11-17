@@ -14,9 +14,11 @@ module Dummy
 
 
   def on_command(sender, command, label, args)
-    case label
-    when 'rukkit'
-      p sender, command, args.to_a
+    case label, args.shift
+    when ['rukkit', 'update']
+      p :update, sender, command, args.to_a
+    else
+      p :else, sender, command, args.to_a
     end
   end
 end
