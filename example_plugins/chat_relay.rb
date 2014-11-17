@@ -1,7 +1,3 @@
-require 'digest/sha1'
-require 'erb'
-require 'open-uri'
-require 'json'
 
 require_resource 'scripts/util'
 import 'org.bukkit.entity.Player'

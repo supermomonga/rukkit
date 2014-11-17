@@ -1,3 +1,6 @@
+require 'digest/sha1'
+require 'erb'
+require 'open-uri'
 
 module Lingr
   extend self
