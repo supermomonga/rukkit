@@ -5,6 +5,7 @@ require 'json'
 
 require_resource 'scripts/util'
 import 'org.bukkit.entity.Player'
+import 'org.bukkit.ChatColor'
 
 module Lingr
   ROMAJI_CONVERSION_TABLE = {
@@ -271,7 +272,19 @@ module Lingr
     /^べ$/ => 'be',
     /^ちめ$/ => 'time',
     /^thx/ => '誠にありがたく想い存じあげます',
-    /^yw/ => 'いえいえ、情けは人のためならず、という諺がありますゆえ'}
+    /^yw/ => 'いえいえ、情けは人のためならず、という諺がありますゆえ',
+    /^pl[zs]/ => 'お手数おかけいたしますが、よろしくお願いいたします',
+    /wa-i/ => "わーい[^。^]",
+    /kawaisou/ => "かわいそう。・°°・(((p(≧□≦)q)))・°°・。ｳﾜｰﾝ!!",
+    /dropper|ドロッパ/ => "泥(・ω・)ﾉ■ ｯﾊﾟ",
+    /hopper|ホッパ/ => "穂(・ω・)ﾉ■ ｯﾊﾟ",
+    /\bkiken/ => "危険",
+    /\banzen/ => "安全",
+    /wkwk/ => "((o(´∀｀)o))ﾜｸﾜｸ",
+    /^unko/ => (<< "unko大量生産!ブリブリo(-\"-;)o~{ChatColor/DARK_RED}⌒ξ~ξ~ξ~ξ~ξ~ξ~ξ~ξ~~{ChatColor/RESET}"),
+    /dks/ => "溺((o(´o｀)o))死",
+    /tkm/ => "#{ChatColor::MAGIC}匠#{ChatColor::RESET}",
+    /^!\?$/ =>, "!? な、なんだってーΩ ΩΩ"}
 
   class Message
     attr_reader :name, :message
