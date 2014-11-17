@@ -102,7 +102,7 @@ module ChatRelay
     /^unko[.!]$/ => %`unko大量生産!ブリブリo(-"-;)o~{ChatColor/DARK_RED}⌒ξ~ξ~ξ~ξ~ξ~ξ~ξ~ξ~~{ChatColor/RESET}`,
     /\bdks\b/ => '溺((o(´o｀)o))死',
     /\btkm\b/ => "#{ChatColor::MAGIC}匠#{ChatColor::RESET}",
-    /^!\?$/ =>, '!? な、なんだってーΩ ΩΩ'
+    /^!\?$/ => '!? な、なんだってーΩ ΩΩ'
   } # }}}
 
   class Message
