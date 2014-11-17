@@ -8,7 +8,7 @@ import 'org.bukkit.entity.Player'
 import 'org.bukkit.ChatColor'
 
 module Lingr
-  ROMAJI_CONVERSION_TABLE = {
+  ROMAJI_CONVERSION_TABLE = { # {{{
     ttya: 'っちゃ',
     ttyu: 'っちゅ',
     ttyo: 'っちょ',
@@ -262,7 +262,7 @@ module Lingr
     :'-' => 'ー',
     n: 'ん',
     a: 'あ',
-  }
+  } # }}}
   CONVERSION_TABLE = {
     /べんり/ => '便利',
     /ふべん/ => '不便',
@@ -361,3 +361,4 @@ module Lingr
     end
   end
 end
+# vim:foldmethod=marker
