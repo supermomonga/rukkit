@@ -12,11 +12,11 @@ module Dummy
   #   end
   # end
 
-
   def on_command(sender, command, label, args)
     args = args.to_a
     case [label, args.shift]
     when ['rukkit', 'update']
+      log.info('rukkit update')
       p :update, sender, command, args
     else
       p :else, sender, command, args

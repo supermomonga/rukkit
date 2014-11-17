@@ -6,8 +6,11 @@ import 'org.bukkit.ChatColor'
 
 module Rukkit
   module Util
-
     extend self
+
+    def log
+      Bukkit.plugin_manager.get_plugin('rukkit').logger
+    end
 
     def broadcast(*messages)
       Bukkit.server.broadcast_message messages.join
