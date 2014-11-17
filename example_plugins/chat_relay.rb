@@ -115,29 +115,26 @@ module ChatRelay
   extend self
 
   def on_async_player_chat(evt)
-    player = evt.player
-
-    message_texts = evt.message.split
-    evt.message = message_texts.map{|message_text|
-      converted_text = ROMAJI_CONVERSION_TABLE.each_with_object(message_text.dup) {|(k, v), acc|
-        acc.gsub! /wa$/, 'ha'
-        acc.gsub! /nn$/, 'n'
-        acc.gsub! /m([bmp])/, 'n\1'
-        acc.gsub! k.to_s, v
+    # Convert
+    evt.message = evt.message.split.map{|message_text|
+      # Covert to HIRAGANA
+      message_text.tap{|text|
+        converted_text = ROMAJI_CONVERSION_TABLE.each_with_object(text.dup) {|(k, v), acc|
+          acc.gsub! /wa$/, 'ha'
+          acc.gsub! /nn$/, 'n'
+          acc.gsub! /m([bmp])/, 'n\1'
+          acc.gsub! k.to_s, v
+        }
+        break converted_text unless converted_text =~ /\w/
       }
-      if converted_text =~ /\w/
-        message_text
-      else
-        converted_text
-      end
     }.map{|message_text|
+      # Convert by dictionary
       CONVERSION_TABLE.inject(message_text) {|acc, (k, v)| acc.gsub(k, v) }
     }.join ' '
-    message = Message.new player.name, evt.message
 
-    text = "[#{message.name}] #{message.message}"
-
-    Lingr.post_to_lingr text
+    # Post
+    message = Message.new evt.player.name, evt.message
+    Lingr.post_to_lingr "[#{message.name}] #{message.message}"
   end
 
   def on_entity_death(evt)
