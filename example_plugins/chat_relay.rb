@@ -145,9 +145,9 @@ module ChatRelay
 
     case player
     when Player
-      msg = "#{player.name} killed a #{entity.type ? entity.type.name.downcase : entity.inspect}"
-      Lingr.post_to_lingr msg
-      broadcast msg
+      text = "#{player.name} killed a #{entity.type ? entity.type.name.downcase : entity.inspect}"
+      Lingr.post_to_lingr text
+      broadcast text
     end
   end
 end
