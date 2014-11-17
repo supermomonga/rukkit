@@ -7,9 +7,6 @@ require_resource 'scripts/util'
 import 'org.bukkit.entity.Player'
 import 'org.bukkit.ChatColor'
 
-# test
-puts defined?(Lingr) ? "lingr library found" : "lingr library not found"
-
 module ChatRelay
   ROMAJI_CONVERSION_TABLE = { # {{{
     # four charcters
