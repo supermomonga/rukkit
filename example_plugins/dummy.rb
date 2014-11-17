@@ -17,7 +17,7 @@ module Dummy
     case [label, args.shift]
     when ['rukkit', 'update']
       unless args.empty?
-        log.warn('rukkit update with argument is invalid')
+        log.warning('rukkit update with argument is invalid')
         return
       end
 
