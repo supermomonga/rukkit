@@ -113,6 +113,7 @@ module ChatRelay
   end
 
   extend self
+  extend Rukkit::Util
 
   def on_async_player_chat(evt)
     # Convert
