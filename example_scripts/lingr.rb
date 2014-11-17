@@ -32,8 +32,7 @@ module Lingr
   end
 
   def remove_colors(message)
-    colors = ChatColor.values
-    colors.map do |color|
+    ChatColor.values.map do |color|
       message.gsub! color.to_s, ''
     end
     message
