@@ -94,12 +94,12 @@ module ChatRelay
     /^kawaisou$/ => 'かわいそう。・°°・(((p(≧□≦)q)))・°°・。ｳﾜｰﾝ!!',
     /dropper/ => '泥(・ω・)ﾉ■ ｯﾊﾟ',
     /hopper/ => '穂(・ω・)ﾉ■ ｯﾊﾟ',
-    /\bkiken/ => '危険',
-    /\banzen/ => '安全',
+    /\bきけん/ => '危険',
+    /\bあんぜん/ => '安全',
     /\bwk[wt]k\b/ => '((o(´∀｀)o))ﾜｸﾜｸ',
-    /^unko[.!]$/ => %`unko大量生産!ブリブリo(-"-;)o~{ChatColor/DARK_RED}⌒ξ~ξ~ξ~ξ~ξ~ξ~ξ~ξ~~{ChatColor/RESET}`,
+    /^うんこ[.!]$/ => %`unko大量生産!ブリブリo(-"-;)o~#{Rukkit::Util.colorize '⌒ξ~ξ~ξ~ξ~ξ~ξ~ξ~ξ~~', :dark_red}`,
     /\bdks\b/ => '溺((o(´o｀)o))死',
-    /\btkm\b/ => "#{ChatColor::MAGIC}匠#{ChatColor::RESET}",
+    /\btkm\b/ => Rukkit::Util.colorize('匠', :magic),
     /^!\?$/ => '!? な、なんだってーΩ ΩΩ'
   } # }}}
 

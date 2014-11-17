@@ -2,6 +2,7 @@
 
 require 'java'
 import 'org.bukkit.Bukkit'
+import 'org.bukkit.ChatColor'
 
 module Rukkit
   module Util
@@ -44,6 +45,13 @@ module Rukkit
       method = "get_#{type}"
       config = Bukkit.plugin_manager.get_plugin('rukkit').config
       config.send method, config_path
+    end
+
+    def colorize(text, color)
+      colors = ChatColor.values.map(&:name).map(&:to_sym)
+      color = color.upcase
+      color = :RESET unless colors.include? color
+      "{ChatColor/#{color}}#{text}{ChatColor/RESET}"
     end
   end
 end
