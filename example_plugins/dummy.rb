@@ -21,7 +21,11 @@ module Dummy
         return
       end
 
-      p :update, sender, command, args
+      # just for now
+      Dir.chdir('/home/rukkit/rukkit') do
+        system 'git pull --rebase'
+        Bukkit.dispatch_command(sender, 'reload')
+      end
     else
       p :else, sender, command, args
     end
