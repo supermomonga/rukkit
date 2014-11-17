@@ -47,11 +47,20 @@ module Rukkit
       config.send method, config_path
     end
 
-    def colorize(text, color)
-      colors = ChatColor.values.map(&:name).map(&:to_sym)
-      color = color.upcase
-      color = :RESET unless colors.include? color
-      "{ChatColor/#{color}}#{text}{ChatColor/RESET}"
+    def colorize(text, color_name)
+      color_name = color_name.upcase
+
+      colors = ChatColor.values.each_with_object({}){|c, acc|
+        acc[c.name.to_sym] = c
+      }
+
+      if colors.keys.include? color_name
+        color = colors[color_name]
+      else
+        color = colors[:RESET]
+      end
+
+      "#{color}#{text}#{colors[:RESET]}"
     end
   end
 end

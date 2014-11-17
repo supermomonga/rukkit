@@ -2,6 +2,8 @@ require 'digest/sha1'
 require 'erb'
 require 'open-uri'
 
+import 'org.bukkit.ChatColor'
+
 module Lingr
   extend self
 
@@ -14,7 +16,7 @@ module Lingr
     params = {
       room: room,
       bot: bot,
-      text: message,
+      text: remove_colors(message),
       bot_verifier: verifier
     }
 
@@ -27,6 +29,14 @@ module Lingr
     Thread.start do
       open "http://lingr.com/api/room/say?#{query_string}"
     end
+  end
+
+  def remove_colors(message)
+    colors = ChatColor.values
+    colors.map do |color|
+      message.gsub! color.to_s, ''
+    end
+    message
   end
 
 end
