@@ -7,7 +7,7 @@ import 'org.bukkit.ChatColor'
 module Lingr
   extend self
 
-  def post_to_lingr(message)
+  def post(message)
     room = Rukkit::Util.plugin_config 'lingr.room'
     bot = Rukkit::Util.plugin_config 'lingr.bot'
     secret = Rukkit::Util.plugin_config 'lingr.secret'

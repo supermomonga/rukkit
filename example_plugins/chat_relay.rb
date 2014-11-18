@@ -135,7 +135,7 @@ module ChatRelay
 
     # Post
     message = Message.new evt.player.name, evt.message
-    Lingr.post_to_lingr "[#{message.name}] #{message.message}"
+    Lingr.post "[#{message.name}] #{message.message}"
   end
 
   def on_entity_death(evt)
@@ -145,7 +145,7 @@ module ChatRelay
     case player
     when Player
       text = "#{player.name} killed a #{entity.type ? entity.type.name.downcase : entity.inspect}"
-      Lingr.post_to_lingr text
+      Lingr.post text
       broadcast text
     end
   end
