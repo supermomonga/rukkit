@@ -16,6 +16,7 @@ module SayHelloAndGoodbye
 
   def on_player_quit(evt)
     player = evt.player
+
     msg = "#{player.name}さんがログアウトしました"
     Rukkit::Util.broadcast msg
     Lingr.post msg if defined? Lingr
