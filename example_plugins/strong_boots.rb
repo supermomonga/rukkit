@@ -18,7 +18,7 @@ module StrongBoots
 
         # just for now
         # evt.entity.send_message("[DEBUG] you have #{b}")
-        evt.canceled = true
+        evt.cancelled = true
         play_sound(
           add_loc(evt.entity.location, 0, 5, 0), Sound::BAT_HURT, -0.5, 0.0)
       end
