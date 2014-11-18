@@ -26,6 +26,16 @@ module Dummy
         system 'git pull --rebase'
         Bukkit.dispatch_command(sender, 'reload')
       end
+    when ['rukkit', 'eval']
+      # very dangerous!
+      later(0) do
+        begin
+          # how to handle double-space?
+          eval(args.join(' '))
+        rescue => e
+          log.error(e)
+        end
+      end
     else
       p :else, sender, command, args
     end
