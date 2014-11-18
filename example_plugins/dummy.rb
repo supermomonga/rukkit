@@ -31,7 +31,7 @@ module Dummy
       later(0) do
         begin
           # how to handle double-space?
-          sender.send_messag(eval(args.join(' ')).inspect)
+          sender.send_message(eval(args.join(' ')).inspect)
         rescue => e
           log.warning(e.inspect)
         end
