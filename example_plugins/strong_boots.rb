@@ -7,6 +7,9 @@ module StrongBoots
   extend self
   extend Rukkit::Util
 
+  def on_entity_damage_by_block(evt)
+  end
+
   def on_entity_damage(evt)
     log.info("on_entity_damage: #{evt}")
 
