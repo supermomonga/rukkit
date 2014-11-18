@@ -1,6 +1,6 @@
 import 'org.bukkit.Sound'
 import 'org.bukkit.entity.Player'
-import 'org.bukkit.event.entity.EntityDamageEvent.DamageCause'
+import 'org.bukkit.event.entity.EntityDamageEvent'
 require_resource 'scripts/util'
 
 module StrongBoots
@@ -13,7 +13,7 @@ module StrongBoots
     case evt.entity
     when Player
       case evt.cause
-      when DamageCause::FALL
+      when EntityDamageEvent::DamageCause::FALL
         b = evt.entity.inventory.boots or return
 
         # just for now
