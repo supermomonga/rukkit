@@ -32,7 +32,7 @@ module Lingr
   end
 
   def remove_colors(message)
-    ChatColor.values.inject(message) {|color|
+    ChatColor.values.inject(message) {|message, color|
       message.gsub(color.to_s, '')
     }
   end
