@@ -17,7 +17,10 @@ module StrongBoots
         b = evt.entity.inventory.boots or return
 
         # just for now
-        evt.entity.send_message("[DEBUG] you have #{b}")
+        # evt.entity.send_message("[DEBUG] you have #{b}")
+        evt.canceled = true
+        play_sound(
+          add_loc(evt.entity.location, 0, 5, 0), Sound::BAT_HURT, -0.5, 0.0)
       end
     end
   end
