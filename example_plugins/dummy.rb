@@ -23,7 +23,7 @@ module Dummy
 
       # just for now
       Dir.chdir('/home/rukkit/rukkit') do
-        system 'git pull --rebase'
+        system 'git pull --rebase', stdin: '/dev/null'
         Bukkit.dispatch_command(sender, 'reload')
       end
     when ['rukkit', 'eval']
