@@ -8,15 +8,16 @@ module SayHelloAndGoodbye
 
   def on_player_join(evt)
     player = evt.player
-    Rukkit::Util.broadcast "#{player.name}さんがログインしました"
+
+    msg = "#{player.name}さんがログインしました"
+    Rukkit::Util.broadcast msg
+    Lingr.post msg if defined? Lingr
   end
 
   def on_player_quit(evt)
     player = evt.player
-    Rukkit::Util.broadcast "#{player.name}さんがログアウトしました"
+    msg = "#{player.name}さんがログアウトしました"
+    Rukkit::Util.broadcast msg
+    Lingr.post msg if defined? Lingr
   end
-
 end
-
-
-
