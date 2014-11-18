@@ -33,7 +33,7 @@ module Dummy
           # how to handle double-space?
           sender.send_messag(eval(args.join(' ')).inspect)
         rescue => e
-          log.error(e)
+          log.throwing('Dummy', 'on_command', e)
         end
       end
     else
