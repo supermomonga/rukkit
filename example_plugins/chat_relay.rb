@@ -1,4 +1,3 @@
-
 require_resource 'scripts/util'
 import 'org.bukkit.entity.Player'
 import 'org.bukkit.ChatColor'
@@ -136,18 +135,6 @@ module ChatRelay
     # Post
     message = Message.new evt.player.name, evt.message
     Lingr.post "[#{message.name}] #{message.message}"
-  end
-
-  def on_entity_death(evt)
-    entity = evt.entity
-    player = entity.killer
-
-    case player
-    when Player
-      text = "#{player.name} killed a #{entity.type ? entity.type.name.downcase : entity.inspect}"
-      Lingr.post text
-      broadcast text
-    end
   end
 end
 # vim:foldmethod=marker
