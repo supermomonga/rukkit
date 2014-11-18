@@ -36,6 +36,8 @@ module Dummy
           sender.send_message(e.inspect)
         end
       end
+    when ['rukkit', 'what-time']
+      broadcast Time.now.to_s
     else
       p :else, sender, command, args
     end
