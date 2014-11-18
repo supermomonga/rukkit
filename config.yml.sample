@@ -8,6 +8,7 @@ rukkit:
     - chat_relay
     - super_jump
     - dummy
+    - notifications
   script_dir:
     "/Users/momonga/Develops/rukkit/example_scripts/"
   scripts:
