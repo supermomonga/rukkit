@@ -1,5 +1,6 @@
 import 'org.bukkit.Sound'
 import 'org.bukkit.entity.Player'
+import 'org.bukkit.event.entity.EntityDamageEvent.DamageCause'
 require_resource 'scripts/util'
 
 module StrongBoots
@@ -11,10 +12,13 @@ module StrongBoots
 
     case evt.entity
     when Player
-      b = evt.entity.inventory.boots or return
+      case evt.cause
+      when DamageCause::FALL
+        b = evt.entity.inventory.boots or return
 
-      # just for now
-      evt.entity.send_message("[DEBUG] you have #{b}")
+        # just for now
+        evt.entity.send_message("[DEBUG] you have #{b}")
+      end
     end
   end
 end
