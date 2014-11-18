@@ -13,9 +13,11 @@ module Dummy
   # end
 
   def on_command(sender, command, label, args)
+    return unless label == 'rukkit'
+
     args = args.to_a
-    case [label, args.shift]
-    when ['rukkit', 'update']
+    case args.shift
+    when 'update'
       unless args.empty?
         log.warning('rukkit update with argument is invalid')
         return
@@ -26,7 +28,7 @@ module Dummy
         puts `git pull --rebase`
         Bukkit.dispatch_command(sender, 'reload')
       end
-    when ['rukkit', 'eval']
+    when 'eval'
       # very dangerous!
       later(0) do
         begin
@@ -36,7 +38,7 @@ module Dummy
           sender.send_message(e.inspect)
         end
       end
-    when ['rukkit', 'what-time']
+    when 'what-time'
       broadcast Time.now.to_s
     else
       p :else, sender, command, args
