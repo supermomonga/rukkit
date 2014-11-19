@@ -18,18 +18,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # sync rukkit source
     c.vm.synced_folder './', '/home/vagrant/rukkit', owner: 'vagrant', group: 'vagrant'
 
-    # c.ssh.username = 'root'
-    c.ssh.private_key_path = '~/.vagrant.d/insecure_private_key'
-
     # Make sure to use root user
     c.vm.provision :shell, inline: <<-EOC
     echo 'root:vagrant' | /usr/sbin/chpasswd
     EOC
 
-    # c.vm.provision :shell, inline: <<-EOC
-    # sudo mkdir /root/.ssh
-    # sudo cp /home/vagrant/.ssh/authorized_keys /root/.ssh/
-    # EOC
   end
 
 end
