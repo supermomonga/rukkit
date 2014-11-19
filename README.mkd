@@ -28,17 +28,36 @@ _This instruction is WIP. please don't try it for now_
   - `cd ./rukkit`
 3. Install rubygem dependencies.
   - `bundle install`
-4. Create Vagrant VM and make sure to ssh
+4. Try first build
+  - `lein uberjar`
+5. Create Vagrant VM and make sure to ssh
   - `vagrant init`
-5. Provisioning VM
+6. Provisioning VM
   - `cd ./sunzi`
   - `bundle exec sunzi deploy root@192.168.33.10`
+    - It prompt you to input the password of root user. The password id `vagrant`.
+
+## Edit your config.yml
+
+You need to edit `config.yml` to make rukkit works.
+
+File is at `/home/vagrant/craftbukkit/plugins/rukkit/config.yml`.
+
 
 ## Run
 
-1. Move to `rukkit` repository folder: `cd ./rukkit`
-2. `vagrant up`
-3. Launch Minecraft and connect to `localhost:25565`.
+1. Check vagrant status and ensure VM is running
+  - `vagrant status` shows you the status of VM
+  - `vagrant up` if VM isn't running
+2. SSH to VM and run bukkit server
+  - `vagrant ssh`
+  - `sudo /home/vagrant/craftbukkit/run`
+2. Launch Minecraft and connect to `localhost:25565`.
+
+## Stop
+
+1. Stop Vagrant VM
+  - `vagrant halt`
 
 ## Deploy latest rukkit
 

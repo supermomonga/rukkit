@@ -47,6 +47,7 @@ if [[ "$(which lein)" != /usr/local/bin/lein ]]; then
 fi
 
 
+# Install craftbukkit
 if [ ! -e /home/vagrant/craftbukkit/craftbukkit.jar ]; then
   echo "Installing craftbukkit"
   craftbukkit_url=<%= @attributes.craftbukkit_url %>
@@ -61,19 +62,42 @@ if [ ! -e /home/vagrant/craftbukkit/craftbukkit.jar ]; then
   fi
 fi
 
-# Install Ruby using rbenv
-source recipes/rbenv.sh
-ruby_version=<%= @attributes.ruby_version %>
-
-if [[ "$(which ruby)" != /usr/local/rbenv/versions/$ruby_version* ]]; then
-  echo "Installing ruby-$ruby_version"
-  # Install dependencies using RVM autolibs - see https://blog.engineyard.com/2013/rvm-ruby-2-0
-  rbenv install $ruby_version
-  rbenv global $ruby_version
-  echo 'gem: --no-ri --no-rdoc' > ~/.gemrc
-
-  # Install Bundler
-  gem install bundler
+if [ ! -e /home/vagrant/craftbukkit/run ]; then
+  echo "Creating runner"
+  craftbukkit_allow_memory_size=<%= @attributes.craftbukkit_allow_memory_size %>
+  mkdir -p /home/vagrant/craftbukkit
+  touch /home/vagrant/craftbukkit/run
+  chmod +x /home/vagrant/craftbukkit/run
+  echo "#!/bin/bash" >> /home/vagrant/craftbukkit/run
+  echo 'cd "$( dirname "$0" )"' >> /home/vagrant/craftbukkit/run
+  echo "java -Xmx$craftbukkit_allow_memory_size -jar craftbukkit.jar -o true" >> /home/vagrant/craftbukkit/run
 fi
+
+if [ ! -e /home/vagrant/craftbukkit/plugins/rukkit.jar ]; then
+  mkdir -p /home/vagrant/craftbukkit/plugins
+  mkdir -p /home/vagrant/craftbukkit/plugins/rukkit
+  ln -s /home/vagrant/rukkit/target/rukkit-1.0.0-SNAPSHOT-standalone.jar /home/vagrant/craftbukkit/plugins/rukkit.jar
+fi
+
+if [ ! -e /home/vagrant/craftbukkit/plugins/rukkit/config.yml ]; then
+  mkdir -p /home/vagrant/craftbukkit/plugins
+  mkdir -p /home/vagrant/craftbukkit/plugins/rukkit
+  cat /home/vagrant/rukkit/config.yml.sample | sed 's/".*\/rukkit\//"\/home\/vagrant\/rukkit\//g' > /home/vagrant/craftbukkit/plugins/rukkit/config.yml
+fi
+
+# Install Ruby using rbenv
+# source recipes/rbenv.sh
+# ruby_version=<%= @attributes.ruby_version %>
+#
+# if [[ "$(which ruby)" != /usr/local/rbenv/shims/ruby ]]; then
+#   echo "Installing ruby-$ruby_version"
+#   # Install dependencies using RVM autolibs - see https://blog.engineyard.com/2013/rvm-ruby-2-0
+#   rbenv install $ruby_version
+#   rbenv global $ruby_version
+#   echo 'gem: --no-ri --no-rdoc' > ~/.gemrc
+#
+#   # Install Bundler
+#   gem install bundler
+# fi
 
 echo "Provisioning finished."
