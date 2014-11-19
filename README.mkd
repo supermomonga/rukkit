@@ -28,10 +28,11 @@ _This instruction is WIP. please don't try it for now_
   - `cd ./rukkit`
 3. Install rubygem dependencies.
   - `bundle install`
-4. Create Vagrant VM
+4. Create Vagrant VM and make sure to ssh
   - `vagrant init`
 5. Provisioning VM
-  - `bundle exec sunzi deploy rukkit`
+  - `cd ./sunzi`
+  - `bundle exec sunzi deploy root@192.168.33.10`
 
 ## Run
 
