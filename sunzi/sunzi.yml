@@ -1,0 +1,7 @@
+attributes:
+  environment: vagrant
+
+recipes:
+
+preferences:
+  eval_erb: true
