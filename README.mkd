@@ -5,11 +5,34 @@ Rukkit(pronounce `ルゥリィァキーッツッッッ！`) is the bukkit plugin
 
 ![ルゥリィァキーッツッッッ！](http://d.pr/i/1biAv.png)
 
-# How to install
+# How to install it to your craftbukkit server
 
 1. がんばる
 2. もっとがんばる
 3. がんばる
+
+# How to make it work in your local machine
+
+## Setup
+
+1. Ensure that you installed `Vagrant`, `ruby` and `bundler`.
+  1. You can install `bundler` gem by `gem install bundler`.
+2. Clone this repository: `git clone git@github.com:supermomonga/rukkit.git`
+3. Move to `rukkit` repository folder: `cd ./rukkit`
+4. `bundle install` to install `sunzi`.
+5. `vagrant init` to create and start VM.
+6. `bundle exec sunzi deploy rukkit`
+
+## Run
+
+1. Move to `rukkit` repository folder: `cd ./rukkit`
+2. `vagrant up`
+3. Launch Minecraft and connect to `localhost:25565`.
+
+## Deploy latest rukkit
+
+1. `lein uberjar`
+
 
 # How to write Rukkit plugin by JRuby
 
