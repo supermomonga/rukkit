@@ -31,7 +31,7 @@ _This instruction is WIP. please don't try it for now_
 4. Try first build
   - `lein uberjar`
 5. Create Vagrant VM and make sure to ssh
-  - `vagrant init`
+  - `vagrant up`
 6. Provisioning VM
   - `cd ./sunzi`
   - `bundle exec sunzi deploy root@192.168.33.10`
