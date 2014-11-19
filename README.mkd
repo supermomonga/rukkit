@@ -13,6 +13,8 @@ Rukkit(pronounce `ルゥリィァキーッツッッッ！`) is the bukkit plugin
 
 # How to make it work in your local machine
 
+_This instruction is WIP. please don't try it for now_
+
 ## Setup
 
 1. Ensure that you installed `Vagrant`, `ruby` and `bundler`.
