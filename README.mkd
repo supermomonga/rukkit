@@ -17,13 +17,21 @@ _This instruction is WIP. please don't try it for now_
 
 ## Setup
 
-1. Ensure that you installed `Vagrant`, `ruby` and `bundler`.
-  1. You can install `bundler` gem by `gem install bundler`.
-2. Clone this repository: `git clone git@github.com:supermomonga/rukkit.git`
-3. Move to `rukkit` repository folder: `cd ./rukkit`
-4. `bundle install` to install `sunzi`.
-5. `vagrant init` to create and start VM.
-6. `bundle exec sunzi deploy rukkit`
+1. Ensure that you installed following software
+  - `Java` Java8 or higher version
+  - `leiningen`
+  - `Vagrant` and `VirtualBox`
+  - `ruby` and `bundler` gem.
+    - You can install `bundler` with `gem install bundler` command.
+2. Clone this repository and move to inside.
+  - `git clone git@github.com:supermomonga/rukkit.git`
+  - `cd ./rukkit`
+3. Install dependencies.
+  - `bundle install`
+4. Create Vagrant VM
+  - `vagrant init`
+5. Provisioning VM
+  - `bundle exec sunzi deploy rukkit`
 
 ## Run
 
