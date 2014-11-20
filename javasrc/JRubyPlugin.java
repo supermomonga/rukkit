@@ -44,11 +44,7 @@ public class RubyPlugin extends JavaPlugin implements Listener {
   }
 
   private boolean isRubyMethodExists(Object eventHandler, String method) {
-    if (jruby.callMethod(eventHandler, "respond_to?", method).equals(rubyTrue)) {
-      return true;
-    } else {
-      return false;
-    }
+    return jruby.callMethod(eventHandler, "respond_to?", method).equals(rubyTrue) ? true : false;
   }
 
   private void callRubyMethodIfExists(String method, Object arg1) {
