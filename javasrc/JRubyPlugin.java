@@ -81,21 +81,16 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
   }
 
   private void loadRukkitBundledScript(String script) {
-    getLogger().info("Loading script: [" + script + "]");
+    getLogger().info("----> " + script);
     InputStream is = null;
     BufferedReader br = null;
     try {
-      is = this.getClass().getClassLoader().getResource("scripts/" + script + ".rb").openStream();
+      is = this.getClass().getClassLoader().getResourceAsStream("scripts/" + script + ".rb");
       br = new BufferedReader(new InputStreamReader(is));
-
-      String scriptBuffer =
-        br.lines().collect(Collectors.joining("\n"));
-
-      RubyObject eventHandler = (RubyObject)evalRuby(scriptBuffer);
-      getLogger().info("Script loaded: [" + script + "]");
-
+      evalRuby(br.lines().collect(Collectors.joining("\n")));
+      getLogger().info("----> done.");
     } catch (Exception e) {
-      getLogger().info("Failed to load script: [" + script + "]");
+      getLogger().info("----> failed.");
       e.printStackTrace();
     } finally {
       if (is != null) try { is.close(); } catch (IOException e) {}
@@ -110,17 +105,20 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
   }
 
   private void loadRukkitScript(String scriptDir, String script) {
-    getLogger().info("Loading script: [" + script + "]");
+    getLogger().info("----> " + script);
     String scriptPath = scriptDir + script + ".rb";
     try {
       // Define module
       String moduleName = snakeToCamel(script);
       String scriptBuffer =
-        Files.readAllLines(Paths.get(scriptPath)).stream().collect(Collectors.joining("\n"));
+        Files
+        .readAllLines(Paths.get(scriptPath))
+        .stream()
+        .collect(Collectors.joining("\n"));
       evalRuby(scriptBuffer);
-      getLogger().info("Script loaded: [" + script + "]");
+      getLogger().info("----> done.");
     } catch (Exception e) {
-      getLogger().info("Failed to load script: [" + script + "]");
+      getLogger().info("----> failed.");
       e.printStackTrace();
     }
   }
@@ -132,7 +130,7 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
   }
 
   private void loadRukkitPlugin(String pluginDir, String plugin) {
-    getLogger().info("Loading plugin: [" + plugin + "]");
+    getLogger().info("----> " + plugin);
     String pluginPath = pluginDir + plugin + ".rb";
     try {
       String moduleName = snakeToCamel(plugin);
@@ -144,13 +142,12 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
       // Add Module to event handler list
       if (eventHandler != rubyNil && eventHandler.getType() == rubyModule) {
         eventHandlers.put(plugin, eventHandler);
-        getLogger().info("Plugin loaded: [" + plugin + "]");
+        getLogger().info("----> done.");
       } else {
-        getLogger().warning("Plugin loaded but module not defined: [" + plugin + "]");
-        getLogger().warning("object: " + eventHandler.getType());
+        getLogger().info("----> loaded, but module not found.");
       }
     } catch (Exception e) {
-      getLogger().warning("Failed to load plugin: [" + plugin + "]");
+      getLogger().info("----> failed.");
       e.printStackTrace();
     }
   }
@@ -209,9 +206,15 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     initializeRuby();
     loadConfig();
 
+    getLogger().info("--> Load core scripts.");
     loadCoreScripts();
+
+    getLogger().info("--> Load user scripts.");
     loadUserScripts();
+
+    getLogger().info("--> Load rukkit plugins.");
     loadUserPlugins();
+
     getLogger().info("Rukkit enabled!");
 
     applyEventHandler();
