@@ -1,4 +1,5 @@
-require_resource 'scripts/util'
+# encoding: utf-8
+
 import 'org.bukkit.entity.Player'
 import 'org.bukkit.ChatColor'
 

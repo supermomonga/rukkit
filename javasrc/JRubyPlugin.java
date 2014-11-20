@@ -161,30 +161,13 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     try {
       String moduleName = snakeToCamel(plugin);
 
-      // Add script dir to $LOAD_PATH automatically
-      String userScriptsPath = config.getString("rukkit.script_dir");
-      String loadPathStatement = "";
-      if (userScriptsPath != null)
-        loadPathStatement = "$LOAD_PATH << '" + userScriptsPath + "'\n";
-
-      // Add resource ruby loader
-      String resourceLoader =
-        "import 'com.supermomonga.rukkit.RukkitLoader'\n" +
-        "def require_resource(name)\n" +
-        "  buffer = RukkitLoader.new.get_resource_as_string %`#{name}.rb`\n" +
-        "  eval buffer unless buffer.nil?\n" +
-        "end\n";
-
       String pluginBuffer =
         "# encoding: utf-8\n"
-        + loadPathStatement
-        + resourceLoader
         + Files.readAllLines(Paths.get(pluginPath)).stream().collect(Collectors.joining("\n"))
         + "\n"
         + "nil.tap{\n"
         +   "break " + moduleName + " if defined? " + moduleName + "\n"
         + "}";
-      /* getLogger().info(pluginBuffer); */
       RubyObject eventHandler = (RubyObject)jruby.runScriptlet(pluginBuffer);
 
       // Add Module to event handler list

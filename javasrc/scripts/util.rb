@@ -3,6 +3,13 @@
 require 'java'
 import 'org.bukkit.Bukkit'
 import 'org.bukkit.ChatColor'
+import 'com.supermomonga.rukkit.RukkitLoader'
+
+# Define at toplevel to use same touch it as 'require'
+def require_resource(name)
+  buffer = RukkitLoader.new.get_resource_as_string "#{name}.rb"
+  eval buffer unless buffer.nil?
+end
 
 module Rukkit
   module Util

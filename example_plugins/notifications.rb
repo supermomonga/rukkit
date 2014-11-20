@@ -1,4 +1,3 @@
-require_resource 'scripts/util'
 import 'org.bukkit.entity.Player'
 
 module Notifications

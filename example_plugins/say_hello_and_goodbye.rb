@@ -1,7 +1,5 @@
 # encoding: utf-8
 
-require_resource 'scripts/util'
-
 module SayHelloAndGoodbye
   include_package 'org.bukkit.entity'
   extend self

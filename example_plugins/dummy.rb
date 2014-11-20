@@ -1,5 +1,4 @@
 import 'org.bukkit.Sound'
-require_resource 'scripts/util'
 
 module Dummy
   extend self
