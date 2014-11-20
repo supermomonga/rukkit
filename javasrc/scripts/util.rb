@@ -65,5 +65,10 @@ module Rukkit
 
       "#{color}#{text}#{colors[:RESET]}"
     end
+
+    def camelize snake_case
+      snake_case.split('_').map(&:capitalize).join
+    end
+
   end
 end

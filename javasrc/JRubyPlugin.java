@@ -25,7 +25,7 @@ import org.jruby.embed.ScriptingContainer;
 import org.jruby.embed.EvalFailedException;
 
 
-public class RubyPlugin extends JavaPlugin implements Listener {
+public class JRubyPlugin extends JavaPlugin implements Listener {
   private ScriptingContainer jruby;
   private HashMap<String, Object> eventHandlers = new HashMap<String, Object>();
   private Object rubyTrue, rubyFalse, rubyNil, rubyModule;
@@ -37,10 +37,10 @@ public class RubyPlugin extends JavaPlugin implements Listener {
     jruby.setCompatVersion(org.jruby.CompatVersion.RUBY2_0);
 
     // Because of no compatibility with Java's one
-    rubyTrue = jruby.runScriptlet("true");
-    rubyFalse = jruby.runScriptlet("false");
-    rubyNil = jruby.runScriptlet("nil");
-    rubyModule = jruby.runScriptlet("Module");
+    rubyTrue = evalRuby("true");
+    rubyFalse = evalRuby("false");
+    rubyNil = evalRuby("nil");
+    rubyModule = evalRuby("Module");
   }
 
   private boolean isRubyMethodExists(Object eventHandler, String method) {
@@ -77,13 +77,7 @@ public class RubyPlugin extends JavaPlugin implements Listener {
   }
 
   private Object evalRuby(String script) {
-    try {
-      return jruby.runScriptlet(script);
-    } catch (EvalFailedException e) {
-      return rubyNil;
-    } finally {
-      return rubyNil;
-    }
+    return jruby.runScriptlet(script);
   }
 
   private void loadRukkitBundledScript(String script) {
@@ -97,7 +91,7 @@ public class RubyPlugin extends JavaPlugin implements Listener {
       String scriptBuffer =
         br.lines().collect(Collectors.joining("\n"));
 
-      RubyObject eventHandler = (RubyObject)jruby.runScriptlet(scriptBuffer);
+      RubyObject eventHandler = (RubyObject)evalRuby(scriptBuffer);
       getLogger().info("Script loaded: [" + script + "]");
 
     } catch (Exception e) {
@@ -123,7 +117,7 @@ public class RubyPlugin extends JavaPlugin implements Listener {
       String moduleName = snakeToCamel(script);
       String scriptBuffer =
         Files.readAllLines(Paths.get(scriptPath)).stream().collect(Collectors.joining("\n"));
-      jruby.runScriptlet(scriptBuffer);
+      evalRuby(scriptBuffer);
       getLogger().info("Script loaded: [" + script + "]");
     } catch (Exception e) {
       getLogger().info("Failed to load script: [" + script + "]");
@@ -142,15 +136,10 @@ public class RubyPlugin extends JavaPlugin implements Listener {
     String pluginPath = pluginDir + plugin + ".rb";
     try {
       String moduleName = snakeToCamel(plugin);
-
       String pluginBuffer =
-        "# encoding: utf-8\n"
-        + Files.readAllLines(Paths.get(pluginPath)).stream().collect(Collectors.joining("\n"))
-        + "\n"
-        + "nil.tap{\n"
-        +   "break " + moduleName + " if defined? " + moduleName + "\n"
-        + "}";
-      RubyObject eventHandler = (RubyObject)jruby.runScriptlet(pluginBuffer);
+        Files.readAllLines(Paths.get(pluginPath)).stream().collect(Collectors.joining("\n"))
+        + "\nnil.tap{break " + moduleName + " if " + moduleName + "}\n";
+      RubyObject eventHandler = (RubyObject)evalRuby(pluginBuffer);
 
       // Add Module to event handler list
       if (eventHandler != rubyNil && eventHandler.getType() == rubyModule) {
@@ -158,6 +147,7 @@ public class RubyPlugin extends JavaPlugin implements Listener {
         getLogger().info("Plugin loaded: [" + plugin + "]");
       } else {
         getLogger().warning("Plugin loaded but module not defined: [" + plugin + "]");
+        getLogger().warning("object: " + eventHandler.getType());
       }
     } catch (Exception e) {
       getLogger().warning("Failed to load plugin: [" + plugin + "]");
@@ -176,7 +166,7 @@ public class RubyPlugin extends JavaPlugin implements Listener {
   }
 
   private boolean isDefined(String objectName, String type) {
-    return type.equals(jruby.runScriptlet("defined? " + objectName));
+    return type.equals(evalRuby("defined? " + objectName));
   }
 
   private String snakeToCamel(String snake) {
