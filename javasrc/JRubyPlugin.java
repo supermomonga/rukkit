@@ -86,20 +86,6 @@ public class RubyPlugin extends JavaPlugin implements Listener {
     }
   }
 
-  private Object loadRubyScript(InputStream io, String path) {
-    try {
-      return jruby.runScriptlet(io, path);
-    } finally {
-      try {
-        if (io != null) {
-          io.close();
-        }
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-  }
-
   private void loadRukkitBundledScript(String script) {
     getLogger().info("Loading script: [" + script + "]");
     InputStream is = null;
