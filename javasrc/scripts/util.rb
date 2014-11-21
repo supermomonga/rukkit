@@ -50,6 +50,26 @@ module Rukkit
       config.send method, config_path
     end
 
+    def logger
+      Bukkit.plugin_manager.get_plugin('rukkit').logger
+    end
+
+    def plugin_repository
+      Bukkit.plugin_manager.get_plugin('rukkit').config.get_string "rukkit.repository"
+    end
+
+    def rukkit_dir
+      path =
+        Bukkit.plugin_manager.
+        get_plugin('rukkit').
+        get_class.
+        protection_domain.
+        code_source.
+        location.
+        path
+      File.dirname(path) + "/rukkit/"
+    end
+
     def colorize(text, color_name)
       color_name = color_name.upcase
 

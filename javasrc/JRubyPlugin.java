@@ -175,13 +175,13 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
   private void loadCoreScripts() {
     List<String> scripts = new ArrayList<String>();
     scripts.add("util");
+    scripts.add("initializer");
 
     loadRukkitBundledScripts( scripts );
   }
 
   private void loadUserScripts() {
-    if (config.getString("rukkit.script_dir") != null &&
-        config.getStringList("rukkit.scripts") != null)
+    if (config.getStringList("rukkit.scripts") != null)
       loadRukkitScripts(
           config.getString("rukkit.script_dir"),
           config.getStringList("rukkit.scripts")
@@ -189,12 +189,16 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
   }
 
   private void loadUserPlugins() {
-    if (config.getString("rukkit.plugin_dir") != null &&
-        config.getStringList("rukkit.plugins") != null)
+    if (config.getStringList("rukkit.plugins") != null)
       loadRukkitPlugins(
           config.getString("rukkit.plugin_dir"),
           config.getStringList("rukkit.plugins")
           );
+  }
+
+  private void updatePlugins() {
+    String repository = config.getString("rukkit.repository");
+
   }
 
   private void applyEventHandler() {
@@ -206,14 +210,19 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     initializeRuby();
     loadConfig();
 
+    getLogger().info("--> Update plugins");
+    updatePlugins();
+
     getLogger().info("--> Load core scripts.");
     loadCoreScripts();
 
     getLogger().info("--> Load user scripts.");
-    loadUserScripts();
+    if (config.getString("rukkit.repository") != null)
+      loadUserScripts();
 
     getLogger().info("--> Load rukkit plugins.");
-    loadUserPlugins();
+    if (config.getString("rukkit.repository") != null)
+      loadUserPlugins();
 
     getLogger().info("Rukkit enabled!");
 
@@ -231,7 +240,7 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     return true;
   }
 
-  // EventHandler mappings
+  // EventHandler mappings {{{
   // TODO: I want to generate all event handler mappings automatically,
   //       but it must be painful to parse JavaDoc...
   //       @ujm says that "use jruby repl and ruby reflection to list them up."
@@ -764,4 +773,5 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
   public void onWorldUnload(org.bukkit.event.world.WorldUnloadEvent event) {
     fireEvent("on_world_unload", event);
   }
+  // }}}
 }
