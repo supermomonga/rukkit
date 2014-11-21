@@ -1,6 +1,5 @@
 rukkit:
-  plugin_dir:
-    "/Users/momonga/Develops/rukkit/example_plugins/"
+  repository: git@github.com:supermomonga/akechi.rukkit.git
   plugins:
     - say_hello_and_goodbye
     - strong_boots
@@ -9,8 +8,6 @@ rukkit:
     - super_jump
     - dummy
     - notifications
-  script_dir:
-    "/Users/momonga/Develops/rukkit/example_scripts/"
   scripts:
     - lingr
   plugin_config:
