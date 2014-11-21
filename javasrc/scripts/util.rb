@@ -74,6 +74,10 @@ module Rukkit
       File.dirname(path) + "/rukkit/"
     end
 
+    def repo_dir
+      rukkit_dir + 'repository'
+    end
+
     def colorize(text, color_name)
       color_name = color_name.upcase
 

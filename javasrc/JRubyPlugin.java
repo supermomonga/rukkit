@@ -53,15 +53,15 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
   }
 
   private void fireEvent(String method, Object arg1, Object arg2) {
-    jruby.callMethod(rukkit_core, "fireEvent", method, arg1, arg2);
+    jruby.callMethod(rukkit_core, "fire_event", method, arg1, arg2);
   }
 
   private void fireEvent(String method, Object arg1, Object arg2, Object arg3) {
-    jruby.callMethod(rukkit_core, "fireEvent", method, arg1, arg2, arg3);
+    jruby.callMethod(rukkit_core, "fire_event", method, arg1, arg2, arg3);
   }
 
   private void fireEvent(String method, Object arg1, Object arg2, Object arg3, Object arg4) {
-    jruby.callMethod(rukkit_core, "fireEvent", method, arg1, arg2, arg3, arg4);
+    jruby.callMethod(rukkit_core, "fire_event", method, arg1, arg2, arg3, arg4);
   }
 
   private void loadConfig() {
