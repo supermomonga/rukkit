@@ -43,11 +43,15 @@ module Rukkit
       rubyfloat.to_java Java.float
     end
 
-    def plugin_config(key, type = :string)
-      config_path = "rukkit.plugin_config.#{key}"
+    def config(key, type = :string)
+      config_path = "rukkit.#{key}"
       method = "get_#{type}"
       config = Bukkit.plugin_manager.get_plugin('rukkit').config
       config.send method, config_path
+    end
+
+    def plugin_config(key, type = :string)
+      config "plugin_config.#{key}", type
     end
 
     def logger

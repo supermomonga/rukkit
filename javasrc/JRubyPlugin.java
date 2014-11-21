@@ -29,6 +29,7 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
   private ScriptingContainer jruby;
   private HashMap<String, Object> eventHandlers = new HashMap<String, Object>();
   private Object rubyTrue, rubyFalse, rubyNil, rubyModule;
+  private Object rukkit_core;
   private FileConfiguration config;
 
   private void initializeRuby() {
@@ -48,29 +49,20 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
   }
 
   private void fireEvent(String method, Object arg1) {
-    for (Object eventHandler : eventHandlers.values())
-      if (isRubyMethodExists(eventHandler, method))
-        jruby.callMethod(eventHandler, method, arg1);
+    jruby.callMethod(rukkit_core, "fire_event", method, arg1);
   }
 
   private void fireEvent(String method, Object arg1, Object arg2) {
-    for (Object eventHandler : eventHandlers.values())
-      if (isRubyMethodExists(eventHandler, method))
-        jruby.callMethod(eventHandler, method, arg1, arg2);
+    jruby.callMethod(rukkit_core, "fireEvent", method, arg1, arg2);
   }
 
   private void fireEvent(String method, Object arg1, Object arg2, Object arg3) {
-    for (Object eventHandler : eventHandlers.values())
-      if (isRubyMethodExists(eventHandler, method))
-        jruby.callMethod(eventHandler, method, arg1, arg2, arg3);
+    jruby.callMethod(rukkit_core, "fireEvent", method, arg1, arg2, arg3);
   }
 
   private void fireEvent(String method, Object arg1, Object arg2, Object arg3, Object arg4) {
-    for (Object eventHandler : eventHandlers.values())
-      if (isRubyMethodExists(eventHandler, method))
-        jruby.callMethod(eventHandler, method, arg1, arg2, arg3, arg4);
+    jruby.callMethod(rukkit_core, "fireEvent", method, arg1, arg2, arg3, arg4);
   }
-
 
   private void loadConfig() {
     config = getConfig();
@@ -80,15 +72,16 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     return jruby.runScriptlet(script);
   }
 
-  private void loadRukkitBundledScript(String script) {
+  private Object loadRukkitBundledScript(String script) {
     getLogger().info("----> " + script);
     InputStream is = null;
     BufferedReader br = null;
     try {
       is = this.getClass().getClassLoader().getResourceAsStream("scripts/" + script + ".rb");
       br = new BufferedReader(new InputStreamReader(is));
-      evalRuby(br.lines().collect(Collectors.joining("\n")));
+      Object obj = evalRuby(br.lines().collect(Collectors.joining("\n")));
       getLogger().info("----> done.");
+      return obj;
     } catch (Exception e) {
       getLogger().info("----> failed.");
       e.printStackTrace();
@@ -96,109 +89,12 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
       if (is != null) try { is.close(); } catch (IOException e) {}
       if (br != null) try { br.close(); } catch (IOException e) {}
     }
-  }
-
-  private void loadRukkitBundledScripts(List<String> scripts) {
-    for (String script : scripts) {
-      loadRukkitBundledScript(script);
-    }
-  }
-
-  private void loadRukkitScript(String scriptDir, String script) {
-    getLogger().info("----> " + script);
-    String scriptPath = scriptDir + script + ".rb";
-    try {
-      // Define module
-      String moduleName = snakeToCamel(script);
-      String scriptBuffer =
-        Files
-        .readAllLines(Paths.get(scriptPath))
-        .stream()
-        .collect(Collectors.joining("\n"));
-      evalRuby(scriptBuffer);
-      getLogger().info("----> done.");
-    } catch (Exception e) {
-      getLogger().info("----> failed.");
-      e.printStackTrace();
-    }
-  }
-
-  private void loadRukkitScripts(String scriptDir, List<String> scripts) {
-    for (String script : scripts) {
-      loadRukkitScript(scriptDir, script);
-    }
-  }
-
-  private void loadRukkitPlugin(String pluginDir, String plugin) {
-    getLogger().info("----> " + plugin);
-    String pluginPath = pluginDir + plugin + ".rb";
-    try {
-      String moduleName = snakeToCamel(plugin);
-      String pluginBuffer =
-        Files.readAllLines(Paths.get(pluginPath)).stream().collect(Collectors.joining("\n"))
-        + "\nnil.tap{break " + moduleName + " if " + moduleName + "}\n";
-      RubyObject eventHandler = (RubyObject)evalRuby(pluginBuffer);
-
-      // Add Module to event handler list
-      if (eventHandler != rubyNil && eventHandler.getType() == rubyModule) {
-        eventHandlers.put(plugin, eventHandler);
-        getLogger().info("----> done.");
-      } else {
-        getLogger().info("----> loaded, but module not found.");
-      }
-    } catch (Exception e) {
-      getLogger().info("----> failed.");
-      e.printStackTrace();
-    }
-  }
-
-  private void loadRukkitPlugins(String pluginDir, List<String> plugins) {
-    for (String plugin : plugins) {
-      loadRukkitPlugin(pluginDir, plugin);
-    }
-  }
-
-  private boolean isModuleDefined(String moduleName) {
-    return isDefined(moduleName, "constant");
-  }
-
-  private boolean isDefined(String objectName, String type) {
-    return type.equals(evalRuby("defined? " + objectName));
-  }
-
-  private String snakeToCamel(String snake) {
-    return Arrays.asList(snake.split("_")).stream().map(
-        w -> w.substring(0,1).toUpperCase() + w.substring(1)
-        ).collect(Collectors.joining(""));
+    return rubyNil;
   }
 
   private void loadCoreScripts() {
-    List<String> scripts = new ArrayList<String>();
-    scripts.add("util");
-    scripts.add("initializer");
-
-    loadRukkitBundledScripts( scripts );
-  }
-
-  private void loadUserScripts() {
-    if (config.getStringList("rukkit.scripts") != null)
-      loadRukkitScripts(
-          config.getString("rukkit.script_dir"),
-          config.getStringList("rukkit.scripts")
-          );
-  }
-
-  private void loadUserPlugins() {
-    if (config.getStringList("rukkit.plugins") != null)
-      loadRukkitPlugins(
-          config.getString("rukkit.plugin_dir"),
-          config.getStringList("rukkit.plugins")
-          );
-  }
-
-  private void updatePlugins() {
-    String repository = config.getString("rukkit.repository");
-
+    loadRukkitBundledScript("util");
+    this.rukkit_core = loadRukkitBundledScript("core");
   }
 
   private void applyEventHandler() {
@@ -210,19 +106,8 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
     initializeRuby();
     loadConfig();
 
-    getLogger().info("--> Update plugins");
-    updatePlugins();
-
     getLogger().info("--> Load core scripts.");
     loadCoreScripts();
-
-    getLogger().info("--> Load user scripts.");
-    if (config.getString("rukkit.repository") != null)
-      loadUserScripts();
-
-    getLogger().info("--> Load rukkit plugins.");
-    if (config.getString("rukkit.repository") != null)
-      loadUserPlugins();
 
     getLogger().info("Rukkit enabled!");
 
