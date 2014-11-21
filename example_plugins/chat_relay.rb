@@ -87,8 +87,6 @@ module ChatRelay
     /^あれ$/ => 'are',
     /^ちめ$/ => 'time',
     /^ほうせ$/ => 'house',
-    /^thx[.!]*$/ => '誠にありがたく想い存じあげます',
-    /^yw(?:\.|!+)?$/ => 'いえいえ、情けは人のためならず、という諺がありますゆえ',
     /^pl[zs]/ => 'お手数おかけしますが、よろしくお願い致します。',
     /wa-+i/ => 'わーい[^。^]',
     /^kawaisou$/ => 'かわいそう。・°°・(((p(≧□≦)q)))・°°・。ｳﾜｰﾝ!!',
@@ -101,6 +99,13 @@ module ChatRelay
     /\bdks\b/ => '溺((o(´o｀)o))死',
     /\btkm\b/ => Rukkit::Util.colorize('匠', :magic),
     /^!\?$/ => '!? な、なんだってーΩ ΩΩ'
+  } # }}}
+  RANDOM_CONVERSION_TABLE = { # {{{
+    /^thx[.!]*$/ => [
+      '誠にありがたく想い存じあげます',
+      'いつもお引き立ていただき、ありがとうございます。'],
+    /^yw(?:\.|!+)?$/ => [
+      'いえいえ、情けは人のためならず、という諺がありますゆえ'],
   } # }}}
 
   class Message
@@ -130,7 +135,8 @@ module ChatRelay
       }
     }.map{|message_text|
       # Convert by dictionary
-      CONVERSION_TABLE.inject(message_text) {|acc, (k, v)| acc.gsub(k, v) }
+      message_text = CONVERSION_TABLE.inject(message_text) {|acc, (k, v)| acc.gsub(k, v) }
+      RANDOM_CONVERSION_TABLE.inject(message_text) {|acc, (k, vs)| acc.gsub(k, vs.sample) }
     }.join ' '
 
     # Post
