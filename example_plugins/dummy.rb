@@ -43,4 +43,6 @@ module Dummy
       p :else, sender, command, args
     end
   end
+
+  Lingr.post('Rukkit updated.')
 end
