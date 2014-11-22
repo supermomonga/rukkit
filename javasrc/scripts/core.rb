@@ -86,7 +86,8 @@ module Rukkit
       def update_repository(repo_dir)
         logger.info "----> Pull repository"
         Dir.chdir(repo_dir) do
-          `git pull --rebase`
+          p `pwd`
+          p `git pull --rebase`
         end
       end
 
@@ -98,7 +99,8 @@ module Rukkit
       def update_dependencies(repo_dir)
         logger.info "----> Update dependencies"
         Dir.chdir(repo_dir) do
-          `bundle install`
+          p `pwd`
+          p `bundle install`
         end
       end
 
