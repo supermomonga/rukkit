@@ -78,6 +78,7 @@ module Rukkit
           module_name = Rukkit::Util.camelize plugin
           if eval("defined? #{module_name}") == 'constant'
             @@eventhandlers << Object.const_get(module_name)
+            logger.info "----> #{@@eventhandlers}"
           end
         end
       end
@@ -118,21 +119,27 @@ module Rukkit
     def on_command(sender, command, label, args)
       return unless label == 'rukkit'
       args = args.to_a
-      case [args.shift.to_sym, args]
-      when [:reload, []]
+      case args.shift.to_sym
+      when :reload
+        Lingr.post 'reloading'
         Rukkit::Util.broadcast '[Rukkit] reloading'
         Rukkit::Core.load_core_scripts
         Rukkit::Core.load_scripts Rukkit::Util.repo_dir
         Rukkit::Core.load_plugins Rukkit::Util.repo_dir
         Rukkit::Util.broadcast '[Rukkit] reloaded'
-      when [:update, []]
+        Lingr.post 'reloaded'
+      when :update
+        Lingr.post 'updating'
         Rukkit::Util.broadcast '[Rukkit] updating'
         Rukkit::Core.update_repository Rukkit::Util.repo_dir
         Rukkit::Core.load_core_scripts
         Rukkit::Core.load_scripts Rukkit::Util.repo_dir
         Rukkit::Core.load_plugins Rukkit::Util.repo_dir
         Rukkit::Util.broadcast '[Rukkit] updated'
-      when [:update_self, []]
+        Lingr.post 'updated'
+      when :eval
+        # TODO: Safe eval
+      when :update_self
         # TODO: Self update
       else
         Rukkit::Util.logger.info('Invalid command.')
