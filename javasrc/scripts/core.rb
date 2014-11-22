@@ -20,6 +20,10 @@ module Rukkit
         @@jar ||= JarFile.new @@rukkit_java.get_class.protection_domain.code_source.location.path
       end
 
+      def reload_jar
+        @@jar = JarFile.new @@rukkit_java.get_class.protection_domain.code_source.location.path
+      end
+
       def run
         # rukkit plugin repository
         repo = Rukkit::Util.plugin_repository
@@ -37,12 +41,11 @@ module Rukkit
 
       def update_load_paths
         gems_dirs = Rukkit::Util.gems_dirs
-        p $LOAD_PATH
-        $LOAD_PATH.concat(Dir.glob File.expand_path(gems_sirs))
-        p $LOAD_PATH
+        $LOAD_PATH.concat(Dir.glob File.expand_path(gems_dirs))
       end
 
       def load_core_scripts
+        reload_jar
         scripts = [
           :util,
           :core
