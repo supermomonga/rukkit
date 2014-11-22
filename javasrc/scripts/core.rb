@@ -91,7 +91,7 @@ module Rukkit
       def update_repository(repo_dir)
         logger.info "----> Pull repository"
         Dir.chdir(repo_dir) do
-          `git pull`.split("\n").each do |l|
+          `git pull --rebase`.split("\n").each do |l|
             logger.info "------> #{l}"
           end
         end
