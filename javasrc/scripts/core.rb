@@ -59,7 +59,7 @@ module Rukkit
         scripts.each do |script|
           logger.info "----> Load #{script}"
           script_path = scripts_dir + script + '.rb'
-          require script_path
+          load script_path
         end
       end
 
@@ -72,7 +72,7 @@ module Rukkit
         plugins.each do |plugin|
           logger.info "----> Load #{plugin}"
           plugin_path = plugins_dir + plugin + '.rb'
-          require plugin_path
+          load plugin_path
 
           # register plugin to eventhandler mappings
           module_name = Rukkit::Util.camelize plugin
