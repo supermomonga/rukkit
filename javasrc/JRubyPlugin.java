@@ -95,6 +95,7 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
   private void loadCoreScripts() {
     loadRukkitBundledScript("util");
     this.rukkit_core = loadRukkitBundledScript("core");
+    jruby.callMethod(this.rukkit_core, "run");
   }
 
   private void applyEventHandler() {

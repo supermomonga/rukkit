@@ -146,6 +146,5 @@ module Rukkit
 end
 
 Rukkit::Core.init
-Rukkit::Core.run
 Rukkit::Core
 
