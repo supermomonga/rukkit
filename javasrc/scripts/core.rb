@@ -22,15 +22,9 @@ module Rukkit
 
       def run
         # rukkit plugin repository
-        logger.info "--> Rukkit plugin repository"
         repo = Rukkit::Util.plugin_repository
         repo_dir = Rukkit::Util.repo_dir
-        if File.exists? repo_dir
-          update_repository repo_dir
-        else
-          clone_repository repo_dir, repo
-        end
-        update_dependencies repo_dir
+        clone_or_update_repository repo_dir
 
         # Load user scripts and plugins
         load_scripts repo_dir
@@ -78,24 +72,45 @@ module Rukkit
           module_name = Rukkit::Util.camelize plugin
           if eval("defined? #{module_name}") == 'constant'
             @@eventhandlers << Object.const_get(module_name)
-            logger.info "----> #{@@eventhandlers}"
+            # logger.info "------> #{@@eventhandlers.map(&:to_s)}"
           end
         end
+        logger.info "----> #{@@eventhandlers.map(&:to_s)}"
+      end
+
+      def clone_or_update_repository(repo_dir)
+        logger.info "--> Rukkit plugin repository"
+        if File.exists? repo_dir
+          update_repository repo_dir
+        else
+          clone_repository repo_dir, repo
+        end
+        update_dependencies repo_dir
       end
 
       def update_repository(repo_dir)
         logger.info "----> Pull repository"
-        `cd #{repo_dir}; git pull --rebase`
+        Dir.chdir(repo_dir) do
+          `git pull`.split("\n").each do |l|
+            logger.info "------> #{l}"
+          end
+        end
       end
 
       def clone_repository(repo_dir, repo)
         logger.info "----> Clone repository"
-        `git clone #{repo} #{repo_dir}`
+        `git clone #{repo} #{repo_dir}`.split("\n").each do |l|
+          logger.info "------> #{l}"
+        end
       end
 
       def update_dependencies(repo_dir)
         logger.info "----> Update dependencies"
-        `cd #{repo_dir}; bundle install`
+        Dir.chdir(repo_dir) do
+          `bundle install`.split("\n").each do |l|
+            logger.info "------> #{l}"
+          end
+        end
       end
 
       def fire_event(event, *args)
@@ -117,22 +132,22 @@ module Rukkit
       args = args.to_a
       case args.shift.to_sym
       when :reload
-        Lingr.post 'reloading'
+        Lingr.post '[RUKKIT] reloading'
         Rukkit::Util.broadcast '[Rukkit] reloading'
         Rukkit::Core.load_core_scripts
         Rukkit::Core.load_scripts Rukkit::Util.repo_dir
         Rukkit::Core.load_plugins Rukkit::Util.repo_dir
         Rukkit::Util.broadcast '[Rukkit] reloaded'
-        Lingr.post 'reloaded'
+        Lingr.post '[RUKKIT] reloaded'
       when :update
-        Lingr.post 'updating'
+        Lingr.post '[RUKKIT] updating'
         Rukkit::Util.broadcast '[Rukkit] updating'
         Rukkit::Core.update_repository Rukkit::Util.repo_dir
         Rukkit::Core.load_core_scripts
         Rukkit::Core.load_scripts Rukkit::Util.repo_dir
         Rukkit::Core.load_plugins Rukkit::Util.repo_dir
         Rukkit::Util.broadcast '[Rukkit] updated'
-        Lingr.post 'updated'
+        Lingr.post '[RUKKIT] updated'
       when :eval
         # TODO: Safe eval
       when :update_self
