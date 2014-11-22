@@ -85,9 +85,7 @@ module Rukkit
 
       def update_repository(repo_dir)
         logger.info "----> Pull repository"
-        Dir.chdir(repo_dir) do
-          `git pull --rebase`
-        end
+        `cd #{repo_dir}; git pull --rebase`
       end
 
       def clone_repository(repo_dir, repo)
@@ -97,9 +95,7 @@ module Rukkit
 
       def update_dependencies(repo_dir)
         logger.info "----> Update dependencies"
-        Dir.chdir(repo_dir) do
-          `bundle install`
-        end
+        `cd #{repo_dir}; bundle install`
       end
 
       def fire_event(event, *args)

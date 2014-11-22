@@ -13,7 +13,8 @@ module Rukkit
     end
 
     def broadcast(*messages)
-      Bukkit.server.broadcast_message [messages].flatten.join
+      logger.info "broadcast: " + messages.join
+      Bukkit.server.broadcast_message messages.join
     end
 
     def sec(n)
