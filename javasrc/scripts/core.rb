@@ -35,6 +35,13 @@ module Rukkit
         @@jar.get_input_stream(@@jar.get_entry(entry_path)).to_io.read
       end
 
+      def update_load_paths
+        gems_dirs = Rukkit::Util.gems_dirs
+        p $LOAD_PATH
+        $LOAD_PATH.concat(Dir.glob File.expand_path(gems_sirs))
+        p $LOAD_PATH
+      end
+
       def load_core_scripts
         scripts = [
           :util,
@@ -47,6 +54,7 @@ module Rukkit
       end
 
       def load_scripts(repo_dir)
+        update_load_paths
         logger.info "--> Load rukkit scripts"
         scripts_dir = repo_dir + '/scripts/'
         scripts = Rukkit::Util.config 'scripts', :list
@@ -58,6 +66,7 @@ module Rukkit
       end
 
       def load_plugins(repo_dir)
+        update_load_paths
         @@eventhandlers = []
         logger.info "--> Load rukkit plugins"
         plugins_dir = repo_dir + '/plugins/'
@@ -107,7 +116,7 @@ module Rukkit
       def update_dependencies(repo_dir)
         logger.info "----> Update dependencies"
         Dir.chdir(repo_dir) do
-          `bundle install`.split("\n").each do |l|
+          `bundle install --path vendor/bundler`.split("\n").each do |l|
             logger.info "------> #{l}"
           end
         end

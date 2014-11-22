@@ -75,6 +75,10 @@ module Rukkit
       File.dirname(path) + "/rukkit/"
     end
 
+    def gems_dirs
+      repo_dir + 'repository/vendor/bundler/*/*/gems/**/lib/'
+    end
+
     def repo_dir
       rukkit_dir + 'repository'
     end
