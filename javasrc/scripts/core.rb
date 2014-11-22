@@ -59,7 +59,6 @@ module Rukkit
 
       def load_plugins(repo_dir)
         @@eventhandlers = []
-        @@eventhandlers << Rukkit::Loader
         logger.info "--> Load rukkit plugins"
         plugins_dir = repo_dir + '/plugins/'
         plugins = Rukkit::Util.config 'plugins', :list
@@ -76,6 +75,7 @@ module Rukkit
           end
         end
         logger.info "----> #{@@eventhandlers.map(&:to_s)}"
+        @@eventhandlers.unshift Rukkit::Loader
       end
 
       def clone_or_update_repository(repo_dir)
