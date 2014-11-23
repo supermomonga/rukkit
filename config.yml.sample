@@ -4,7 +4,7 @@ rukkit:
     - say_hello_and_goodbye
     - strong_boots
     - fast_dash
-    - chat_relay
+    # - chat_relay
     - super_jump
     - dummy
     - notifications
