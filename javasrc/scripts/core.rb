@@ -119,6 +119,9 @@ module Rukkit
       def update_dependencies(repo_dir)
         logger.info "----> Update dependencies"
         Dir.chdir(repo_dir) do
+          `echo $PATH`.split(":").join("\n")
+          `pwd`
+          `~/.rbenv/shims/ruby -v`
           `which ruby`
           `which bundler`
           `ruby -v`
