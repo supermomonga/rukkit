@@ -1,11 +1,7 @@
-FROM momonga/leiningen
+FROM momonga/craftbukkit:1.7.9
 MAINTAINER supermomonga
 
-RUN mkdir -p /root/craftbukkit
+# Add volume
 
-RUN curl http://tcpr.ca/files/craftbukkit/craftbukkit-1.7.9-R0.1-20140501.232444-18.jar -o /root/craftbukkit/craftbukkit.jar
-
-RUN echo "#!/bin/bash\ncd /root/craftbukkit/\njava -Xmx1536M -jar craftbukkit.jar -o true" > /usr/local/bin/craftbukkit
-RUN chmod +x /usr/local/bin/craftbukkit
 
 ENTRYPOINT ["craftbukkit"]
