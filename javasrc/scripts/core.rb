@@ -119,6 +119,8 @@ module Rukkit
       def update_dependencies(repo_dir)
         logger.info "----> Update dependencies"
         Dir.chdir(repo_dir) do
+          `ruby -v`
+          `bundler -v`
           `bundle install --path vendor/bundler`.split("\n").each do |l|
             logger.info "------> #{l}"
           end
