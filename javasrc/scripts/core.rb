@@ -45,20 +45,21 @@ module Rukkit
       end
 
       def load_core_scripts
+        logger.info "--> Load rukkit core scripts"
         reload_jar
         scripts = [
           :util,
           :core
         ]
         scripts.each do |script|
-          logger.info("--> #{script}")
+          logger.info("----> #{script}")
           eval read_entry("scripts/#{script}.rb")
         end
       end
 
       def load_scripts(repo_dir)
         update_load_paths
-        logger.info "--> Load rukkit scripts"
+        logger.info "--> Load rukkit user scripts"
         scripts_dir = repo_dir + '/scripts/'
         scripts = Rukkit::Util.config 'scripts', :list
         scripts.each do |script|
@@ -71,7 +72,7 @@ module Rukkit
       def load_plugins(repo_dir)
         update_load_paths
         @@eventhandlers = []
-        logger.info "--> Load rukkit plugins"
+        logger.info "--> Load rukkit user plugins"
         plugins_dir = repo_dir + '/plugins/'
         plugins = Rukkit::Util.config 'plugins', :list
         plugins.each do |plugin|
@@ -154,7 +155,7 @@ module Rukkit
       when :update
         Lingr.post '[RUKKIT] updating'
         Rukkit::Util.broadcast '[Rukkit] updating'
-        Rukkit::Core.update_repository Rukkit::Util.repo_dir
+        Rukkit::Core.clone_or_update_repository Rukkit::Util.repo_dir
         Rukkit::Core.load_core_scripts
         Rukkit::Core.load_scripts Rukkit::Util.repo_dir
         Rukkit::Core.load_plugins Rukkit::Util.repo_dir
