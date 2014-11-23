@@ -119,9 +119,25 @@ module Rukkit
 
       def update_dependencies(repo_dir)
         logger.info "----> Update dependencies"
+        jruby = 'java -jar ~/.m2/repository/org/jruby/jruby-complete/1.7.16.1/jruby-complete-1.7.16.1.jar'
+        # For disable rbenv shims
+        ENV['PATH'] = ENV['PATH'].split(":").reject{
+          |path| path == "#{ENV['HOME']}/.rbenv/shims"
+        }.join(":")
+
+        `mkdir -p #{Rukkit::Util.gem_home}`
+        ENV['GEM_HOME'] = Rukkit::Util.gem_home
+
         Dir.chdir(repo_dir) do
-          `bundle install --path vendor/bundler`.split("\n").each do |l|
-            logger.info "------> #{l}"
+          if `#{jruby} -S gem list | grep bundler` == ''
+            logger.info "------> Install bundler gem"
+            `#{jruby} -S gem install bundler`.split("\n").each do |l|
+              logger.info "--------> #{l}"
+            end
+          end
+          logger.info "------> Install rubygems"
+          `#{jruby} -S #{Rukkit::Util.bundler_path} install --path vendor/bundler`.split("\n").each do |l|
+            logger.info "--------> #{l}"
           end
         end
       end

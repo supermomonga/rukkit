@@ -79,6 +79,15 @@ module Rukkit
       repo_dir + '/vendor/bundler/*/*/gems/**/lib/'
     end
 
+    def gem_home
+      repo_dir + '/vendor/gems'
+    end
+
+    def bundler_path
+      dir = Dir.glob("#{gem_home}/gems/bundler-*/bin/").first
+      "#{dir}/bundle"
+    end
+
     def repo_dir
       rukkit_dir + 'repository'
     end
