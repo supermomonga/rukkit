@@ -19,9 +19,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     c.vm.synced_folder './', '/home/vagrant/rukkit', owner: 'vagrant', group: 'vagrant'
 
     # Make sure to use root user
-    c.vm.provision :shell, inline: <<-EOC
-    echo 'root:vagrant' | /usr/sbin/chpasswd
-    EOC
+    c.vm.provision :shell, path: './provision.sh'
 
   end
 

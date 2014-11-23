@@ -1,29 +1,11 @@
-#!/bin/bash
-set -e
 
-# Load base utility functions like sunzi.mute() and sunzi.install()
-source recipes/sunzi.sh
-
-# This line is necessary for automated provisioning for Debian/Ubuntu.
-# Remove if you're not on Debian/Ubuntu.
-export DEBIAN_FRONTEND=noninteractive
-
-# Add Dotdeb repository. Recommended if you're using Debian. See http://www.dotdeb.org/about/
-# source recipes/dotdeb.sh
-# source recipes/backports.sh
-
-# Update apt catalog and upgrade installed packages
-sunzi.mute "apt-get update"
-sunzi.mute "apt-get -y upgrade"
-
-# Install packages
+apt-get update
+apt-get -y upgrade
 apt-get -y install git-core ntp curl
 
-# Install sysstat, then configure if this is a new install.
-if sunzi.install "sysstat"; then
-  sed -i 's/ENABLED="false"/ENABLED="true"/' /etc/default/sysstat
-  /etc/init.d/sysstat restart
-fi
+craftbukkit_url=http://tcpr.ca/files/craftbukkit/craftbukkit-1.7.9-R0.1-20140501.232444-18.jar
+craftbukkit_md5=9fbcce9e7ea0a9883ef47bb83abdb4e7
+craftbukkit_allow_memory_size=1536M
 
 if [[ "$(which java)" != /usr/bin/java ]]; then
   echo "Installing Java"
@@ -31,8 +13,8 @@ if [[ "$(which java)" != /usr/bin/java ]]; then
   echo "deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main" | tee -a /etc/apt/sources.list.d/webupd8team-java.list
   apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886
 
-  # sunzi.mute "add-apt-repository -y ppa:webupd8team/java"
-  sunzi.mute "apt-get update"
+  # add-apt-repository -y ppa:webupd8team/java
+  apt-get update
   echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
   apt-get -y install oracle-java8-installer
   apt-get -y install oracle-java8-set-default
@@ -41,19 +23,17 @@ fi
 
 if [[ "$(which lein)" != /usr/local/bin/lein ]]; then
   echo "Installing leiningen"
-  sunzi.mute "curl https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein -o /usr/local/bin/lein"
-  sunzi.mute "chmod a+x /usr/local/bin/lein"
-  sunzi.mute "lein"
+  curl https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein -o /usr/local/bin/lein
+  chmod a+x /usr/local/bin/lein
+  lein
 fi
 
 
 # Install craftbukkit
 if [ ! -e /home/vagrant/craftbukkit/craftbukkit.jar ]; then
   echo "Installing craftbukkit"
-  craftbukkit_url=<%= @attributes.craftbukkit_url %>
-  craftbukkit_md5=<%= @attributes.craftbukkit_md5 %>
   mkdir -p /home/vagrant/craftbukkit
-  sunzi.mute "curl $craftbukkit_url -o /home/vagrant/craftbukkit/craftbukkit.jar"
+  curl $craftbukkit_url -o /home/vagrant/craftbukkit/craftbukkit.jar
   hash=`openssl md5 /home/vagrant/craftbukkit/craftbukkit.jar | awk '{print $2}'`
   echo "hash: $hash"
   if [[ "$hash" != "$craftbukkit_md5" ]]; then
@@ -64,7 +44,6 @@ fi
 
 if [ ! -e /home/vagrant/craftbukkit/run ]; then
   echo "Creating runner"
-  craftbukkit_allow_memory_size=<%= @attributes.craftbukkit_allow_memory_size %>
   mkdir -p /home/vagrant/craftbukkit
   touch /home/vagrant/craftbukkit/run
   chmod +x /home/vagrant/craftbukkit/run
@@ -72,6 +51,11 @@ if [ ! -e /home/vagrant/craftbukkit/run ]; then
   echo 'cd "$( dirname "$0" )"' >> /home/vagrant/craftbukkit/run
   echo "java -Xmx$craftbukkit_allow_memory_size -jar craftbukkit.jar -o true" >> /home/vagrant/craftbukkit/run
 fi
+
+echo "Install leiningen deps"
+cd /vagrant
+sudo -u vagrant lein deps :tree
+sudo -u vagrant lein deps :tree
 
 if [ ! -e /home/vagrant/craftbukkit/plugins/rukkit.jar ]; then
   mkdir -p /home/vagrant/craftbukkit/plugins
@@ -82,22 +66,7 @@ fi
 if [ ! -e /home/vagrant/craftbukkit/plugins/rukkit/config.yml ]; then
   mkdir -p /home/vagrant/craftbukkit/plugins
   mkdir -p /home/vagrant/craftbukkit/plugins/rukkit
-  cat /home/vagrant/rukkit/config.yml.sample | sed 's/".*\/rukkit\//"\/home\/vagrant\/rukkit\//g' > /home/vagrant/craftbukkit/plugins/rukkit/config.yml
+  cp /home/vagrant/rukkit/config.yml.sample /home/vagrant/craftbukkit/plugins/rukkit/config.yml
 fi
 
-# Install Ruby using rbenv
-# source recipes/rbenv.sh
-# ruby_version=<%= @attributes.ruby_version %>
-#
-# if [[ "$(which ruby)" != /usr/local/rbenv/shims/ruby ]]; then
-#   echo "Installing ruby-$ruby_version"
-#   # Install dependencies using RVM autolibs - see https://blog.engineyard.com/2013/rvm-ruby-2-0
-#   rbenv install $ruby_version
-#   rbenv global $ruby_version
-#   echo 'gem: --no-ri --no-rdoc' > ~/.gemrc
-#
-#   # Install Bundler
-#   gem install bundler
-# fi
-
-echo "Provisioning finished."
+chown vagrant.vagrant -R /home/vagrant

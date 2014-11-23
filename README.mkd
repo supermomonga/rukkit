@@ -1,108 +1,67 @@
 
-# Rukkit
+## Rukkit
 
 Rukkit(pronounce `ルゥリィァキーッツッッッ！`) is the bukkit plugin which allows you to customize bukkit's behavior by using JRuby.
 
 ![ルゥリィァキーッツッッッ！](http://d.pr/i/1biAv.png)
 
-# How to install it to your craftbukkit server
+## How to install it to your craftbukkit server
 
-1. がんばる
-2. もっとがんばる
-3. がんばる
+(TODO)
 
-# How to make it work in your local machine
+## Local setup
 
-_This instruction is WIP. please don't try it for now_
+For local development
 
-## Dependencies and install instruction
+### Dependencies and install instruction
 
-### Mac OS X
-- Java8
-  - がんばる(Visit oracle website)
-- leiningen
-  - `brew install leiningen`
-- Vagrant and VirtualBox
-  - `brew cask install virtualbox`
-  - `brew install vagrant`
-- ruby and bundler gem
-  - `brew install rbenv ruby-build`
-  - `rbenv install 2.1.3`
-
-### Gentoo
-
-(ujihisa will write this section)
-
-### Ubuntu
-
-(thinca will write this section)
-
-### Windows
-
-_KIAI_
+[See github wiki](https://github.com/supermomonga/rukkit/wiki/Install-dependencies).
 
 
-## Setup
+### Setup virtual machine
 
 1. Ensure that you installed following software
-  - `Java` Java8 or higher version
-  - `leiningen`
   - `Vagrant` and `VirtualBox`
-  - `ruby`
 2. Clone this repository and move to inside.
   - `git clone git@github.com:supermomonga/rukkit.git`
   - `cd ./rukkit`
-3. Install rubygem dependencies.
-  - `rbenv local 2.1.3`
-  - `gem install bundler`
-  - `bundle install`
-4. Try first build
-  - `lein uberjar`
-5. Create Vagrant VM and make sure to ssh
+3. Create Vagrant VM and make sure to ssh
   - `vagrant up`
-6. Provisioning VM
-  - `cd ./sunzi`
-  - `bundle exec sunzi deploy root@192.168.33.10`
-    - It prompt you to input the password of root user. The password id `vagrant`.
 
-## Edit your config.yml
+### Edit your config.yml
 
 You need to edit `config.yml` to make rukkit works.
 
 File is at `/home/vagrant/craftbukkit/plugins/rukkit/config.yml`.
 
+```sh
+vagrant ssh
+vi /home/vagrant/craftbukkit/plugins/rukkit/config.yml
+```
 
-## Run
+
+### Run
 
 1. Check vagrant status and ensure VM is running
   - `vagrant status` shows you the status of VM
   - `vagrant up` if VM isn't running
 2. SSH to VM and run bukkit server
   - `vagrant ssh`
-  - `sudo /home/vagrant/craftbukkit/run`
+  - `/home/vagrant/craftbukkit/run`
 2. Launch Minecraft and connect to `localhost:25565`.
 
-## Stop
+### Stop
 
 1. Stop Vagrant VM
   - `vagrant halt`
 
-## Deploy latest rukkit
+### Deploy latest rukkit
 
-1. `lein uberjar`
+1. `vagrant ssh`
+2. `cd /vagrant`
+2. `lein uberjar`
 
-
-# How to write Rukkit plugin by JRuby
-
-1. 気合
-2. 謙虚さ
-3. しなやかさ
-
-# おいしいもの
-
-- うどん
-
-# License
+## License
 
 
 Copyright (C) 2014 supermomonga

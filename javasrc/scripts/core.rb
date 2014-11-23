@@ -28,7 +28,7 @@ module Rukkit
         # rukkit plugin repository
         repo = Rukkit::Util.plugin_repository
         repo_dir = Rukkit::Util.repo_dir
-        clone_or_update_repository repo_dir
+        clone_or_update_repository repo_dir, repo
 
         # Load user scripts and plugins
         load_scripts repo_dir
@@ -91,7 +91,7 @@ module Rukkit
         @@eventhandlers.unshift Rukkit::Loader
       end
 
-      def clone_or_update_repository(repo_dir)
+      def clone_or_update_repository(repo_dir, repo)
         logger.info "--> Rukkit plugin repository"
         if File.exists? repo_dir
           update_repository repo_dir
@@ -171,7 +171,7 @@ module Rukkit
       when :update
         Lingr.post '[RUKKIT] updating'
         Rukkit::Util.broadcast '[Rukkit] updating'
-        Rukkit::Core.clone_or_update_repository Rukkit::Util.repo_dir
+        Rukkit::Core.clone_or_update_repository Rukkit::Util.repo_dir, Rukkit::Util.plugin_repository
         Rukkit::Core.load_core_scripts
         Rukkit::Core.load_scripts Rukkit::Util.repo_dir
         Rukkit::Core.load_plugins Rukkit::Util.repo_dir
