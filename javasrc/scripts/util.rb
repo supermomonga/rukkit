@@ -80,7 +80,7 @@ module Rukkit
     end
 
     def gem_home
-      repo_dir + '/vendor/gems'
+      rukkit_dir + '/gems'
     end
 
     def bundler_path
