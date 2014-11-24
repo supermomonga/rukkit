@@ -14,7 +14,7 @@ RUN ln -s -f /rukkit/target/rukkit-1.0.0-SNAPSHOT-standalone.jar /craftbukkit/pl
 RUN java -jar ~/.m2/repository/org/jruby/jruby-complete/1.7.16.1/jruby-complete-1.7.16.1.jar -S \
       gem install bundler
 
-RUN echo "#!/bin/bash\ncd /rukkit\nlein uberjar\ncd /craftbukkit/\njava -Xmx1536M -jar craftbukkit.jar -o true" > /usr/local/bin/craftbukkit
+ADD craftbukkit /usr/local/bin/craftbukkit
 
 VOLUME ["/rukkit"]
 

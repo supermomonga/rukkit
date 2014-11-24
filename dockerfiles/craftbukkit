@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd /rukkit
+lein uberjar
+cd /craftbukkit/
+java -Xmx1536M -jar craftbukkit.jar -o true
