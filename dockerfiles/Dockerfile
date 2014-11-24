@@ -16,5 +16,5 @@ RUN java -jar ~/.m2/repository/org/jruby/jruby-complete/1.7.16.1/jruby-complete-
 
 VOLUME ["/rukkit"]
 
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT craftbukkit
 
