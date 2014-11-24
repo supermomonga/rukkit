@@ -7,7 +7,7 @@ rukkit:
     # - chat_relay
     - super_jump
     - dummy
-    - notifications
+    # - notifications
   scripts:
     - lingr
   plugin_config:
