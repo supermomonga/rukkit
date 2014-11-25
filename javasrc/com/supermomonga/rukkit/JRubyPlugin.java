@@ -45,7 +45,7 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
   }
 
   private boolean isRubyMethodExists(Object eventHandler, String method) {
-    return jruby.callMethod(eventHandler, "respond_to?", method).equals(rubyTrue) ? true : false;
+    return jruby.callMethod(eventHandler, "respond_to?", method).equals(rubyTrue);
   }
 
   private void fireEvent(String method, Object...args) {
