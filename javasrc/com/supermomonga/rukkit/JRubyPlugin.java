@@ -84,7 +84,7 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
         throw new IOException("No such resource `" + resourceName + "'.");
     }
 
-    return resource
+    return resource;
   }
 
   private void loadCoreScripts() {
