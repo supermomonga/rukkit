@@ -11,3 +11,5 @@ rukkit:
   scripts:
     - lingr
   plugin_config:
+
+  event_filename: all-events.txt
