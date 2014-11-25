@@ -62,22 +62,29 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
 
   private Object loadRukkitBundledScript(String script) {
     getLogger().info("----> " + script);
-    InputStream is = null;
-    BufferedReader br = null;
-    try {
-      is = this.getClass().getClassLoader().getResourceAsStream("scripts/" + script + ".rb");
-      br = new BufferedReader(new InputStreamReader(is));
+
+    try (
+      InputStream in = openResource("scripts/" + script + ".rb");
+      BufferedReader br = new BufferedReader(new InputStreamReader(is));
+    ) {
       Object obj = evalRuby(br.lines().collect(Collectors.joining("\n")));
       getLogger().info("----> done.");
       return obj;
     } catch (Exception e) {
       getLogger().info("----> failed.");
       e.printStackTrace();
-    } finally {
-      if (is != null) try { is.close(); } catch (IOException e) {}
-      if (br != null) try { br.close(); } catch (IOException e) {}
+      return rubyNil;
     }
-    return rubyNil;
+  }
+
+  private InputStream openResource(String resourceName) throws IOException {
+    InputStream resource = this.getClass().getClassLoader().getResourceAsStream(resourceName);
+
+    if(resource == null) {
+        throw new IOException("No such resource `" + resourceName + "'.");
+    }
+
+    return resource
   }
 
   private void loadCoreScripts() {
