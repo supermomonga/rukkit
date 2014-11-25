@@ -65,7 +65,7 @@ public class JRubyPlugin extends JavaPlugin implements Listener {
 
     try (
       InputStream in = openResource("scripts/" + script + ".rb");
-      BufferedReader br = new BufferedReader(new InputStreamReader(is));
+      BufferedReader br = new BufferedReader(new InputStreamReader(in));
     ) {
       Object obj = evalRuby(br.lines().collect(Collectors.joining("\n")));
       getLogger().info("----> done.");
