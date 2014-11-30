@@ -76,11 +76,11 @@ module Rukkit
     end
 
     def gems_dirs
-      rukkit_dir + '/vendor/bundler/*/*/gems/**/lib/'
+      '/rukkit/vendor/bundler/*/*/gems/**/lib/'
     end
 
     def gem_home
-      rukkit_dir + '/gems'
+      rukkit_dir + 'gems'
     end
 
     def bundler_path

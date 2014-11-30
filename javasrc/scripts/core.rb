@@ -136,7 +136,7 @@ module Rukkit
             end
           end
           logger.info "------> Install rubygems"
-          `#{jruby} -S #{Rukkit::Util.bundler_path} install --path vendor/bundler`.split("\n").each do |l|
+          `#{jruby} -S #{Rukkit::Util.bundler_path} install --path /rukkit/vendor/bundler`.split("\n").each do |l|
             logger.info "--------> #{l}"
           end
         end
