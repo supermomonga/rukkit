@@ -18,5 +18,5 @@ ADD craftbukkit /usr/local/bin/craftbukkit
 
 VOLUME ["/rukkit"]
 
-ENTRYPOINT craftbukkit
-
+ENTRYPOINT ["/bin/bash", "/usr/local/bin/craftbukkit"]
+CMD ["2048M"]

@@ -3,4 +3,4 @@
 cd /rukkit
 lein uberjar
 cd /craftbukkit/
-java -Xmx1536M -jar craftbukkit.jar -o true
+java -Xmx$0 -jar craftbukkit.jar -o true
