@@ -46,6 +46,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jruby.embed.ScriptingContainer;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.transform;
 
 public class JRubyPlugin extends JavaPlugin {
@@ -273,6 +275,10 @@ public class JRubyPlugin extends JavaPlugin {
   }
 
   private void writeEvents(Path path, Iterable<? extends RukkitEvent> events) throws IOException {
+    checkNotNull(path);
+    checkNotNull(events);
+    checkArgument(!path.toFile().exists() || path.toFile().canWrite());
+
     Iterable<String> lines = transform(events, new Function<RukkitEvent, String>(){
       @Override
       public String apply(RukkitEvent input) {
