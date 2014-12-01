@@ -37,11 +37,11 @@ public class RukkitEvent {
     checkNotNull(eventClass);
     checkArgument(Event.class.isAssignableFrom(eventClass));
 
-    this.eventClass= eventClass;
+    this.eventClass = eventClass;
 
-    final String sName= eventClass.getSimpleName();
-    this.javaEventName= sName.replaceFirst("Event$", "");
-    this.rubyEventName= CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, this.javaEventName);
+    final String sName = eventClass.getSimpleName();
+    this.javaEventName = sName.replaceFirst("Event$", "");
+    this.rubyEventName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, this.javaEventName);
   }
 
   /**
