@@ -147,7 +147,9 @@ public class JRubyPlugin extends JavaPlugin {
             Class<?> eventClass = Class.forName(canonName);
 
             if(eventClass.getAnnotation(Deprecated.class) == null) {
-              events.add(new RukkitEvent(eventClass));
+              if(!eventClass.isInterface() && (eventClass.getModifiers() & java.lang.reflect.Modifier.ABSTRACT) != java.lang.reflect.Modifier.ABSTRACT) {
+                events.add(new RukkitEvent(eventClass));
+              }
             }
           }
           catch(ClassNotFoundException e) {
