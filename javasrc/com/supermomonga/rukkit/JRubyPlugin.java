@@ -15,9 +15,11 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -203,7 +205,14 @@ public class JRubyPlugin extends JavaPlugin {
 
   // XXX: work around, javassist cannot handle enclosing private method
   void fireEvent(String method, Object...args) {
-    jruby.callMethod(rukkit_core, "fire_event", args);
+    List<Object> rubyArgs = new ArrayList<>(1 + args.length);
+
+    rubyArgs.add(method);
+    for(Object arg : args) {
+      rubyArgs.add(arg);
+    }
+
+    jruby.callMethod(rukkit_core, "fire_event", rubyArgs.toArray());
   }
 
   private Object evalRuby(String script) {
