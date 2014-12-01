@@ -51,8 +51,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.transform;
 
 public class JRubyPlugin extends JavaPlugin {
+  /** A {@link Listener} implementation class object */
   private static final Class<Listener> eventHandlerClass;
 
+  /** Recognized all Rukkit's events */
   private static final ImmutableSet<RukkitEvent> allEvents;
 
   static {
@@ -113,6 +115,11 @@ public class JRubyPlugin extends JavaPlugin {
     }
   }
 
+  /**
+   * Returns all Rukkit's events.
+   *
+   * @return The Rukkit's events
+   */
   private static Iterable<RukkitEvent> listEvents() {
     JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
     if(compiler == null) {
@@ -150,6 +157,12 @@ public class JRubyPlugin extends JavaPlugin {
     }
   }
 
+  /**
+   * Creates an implementation for {@link Listener}.
+   *
+   * @return The implementation for {@link Listener}
+   * @throws RuntimeException When there are any exceptions or errors
+   */
   private static Listener newDynamicEventHandler(JRubyPlugin that) {
     try {
       Constructor<?> ctor = eventHandlerClass.getConstructor(JRubyPlugin.class);
