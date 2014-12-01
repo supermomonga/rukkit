@@ -142,7 +142,11 @@ public class JRubyPlugin extends JavaPlugin {
           String relpath = matcher.group("relpath");
           String canonName = relpath.replaceFirst("\\.class$", "").replace('/', '.');
           try {
-            events.add(new RukkitEvent(Class.forName(canonName)));
+            Class<?> eventClass = Class.forName(canonName);
+
+            if(eventClass.getAnnotation(Deprecated.class) == null) {
+              events.add(new RukkitEvent(eventClass));
+            }
           }
           catch(ClassNotFoundException e) {
             throw new AssertionError(String.format("Cannot convert `%s' extracted from `%s' to correct class name.", relpath, file.getName()), e);
