@@ -40,7 +40,7 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -180,7 +180,6 @@ public class JRubyPlugin extends JavaPlugin {
   private HashMap<String, Object> eventHandlers = new HashMap<String, Object>();
   private Object rubyTrue, rubyFalse, rubyNil, rubyModule;
   private Object rukkit_core;
-  private FileConfiguration config;
 
   private void initializeRuby() {
     jruby = new ScriptingContainer();
@@ -201,10 +200,6 @@ public class JRubyPlugin extends JavaPlugin {
   // XXX: work around, javassist cannot handle enclosing private method
   void fireEvent(String method, Object...args) {
     jruby.callMethod(rukkit_core, "fire_event", args);
-  }
-
-  private void loadConfig() {
-    config = getConfig();
   }
 
   private Object evalRuby(String script) {
@@ -250,8 +245,9 @@ public class JRubyPlugin extends JavaPlugin {
 
   @Override
   public void onEnable() {
+    Configuration config = getConfig();
+
     initializeRuby();
-    loadConfig();
 
     getLogger().info("--> Save all event names to file.");
     try {
