@@ -1,6 +1,7 @@
 package com.supermomonga.rukkit;
 
 import com.google.common.base.CaseFormat;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 import org.bukkit.event.Event;
@@ -45,7 +46,7 @@ public class RukkitEvent {
 
   @Override
   public String toString() {
-    return Objects.toStringHelper(this)
+    return MoreObjects.toStringHelper(this)
       .add("eventClass", this.eventClass)
       .add("javaEventName", this.javaEventName)
       .add("rubyEventName", this.rubyEventName)
