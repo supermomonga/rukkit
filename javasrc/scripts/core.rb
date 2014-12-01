@@ -161,22 +161,18 @@ module Rukkit
       args = args.to_a
       case args.shift.to_sym
       when :reload
-        Lingr.post '[RUKKIT] reloading'
         Rukkit::Util.broadcast '[Rukkit] reloading'
         Rukkit::Core.load_core_scripts
         Rukkit::Core.load_scripts Rukkit::Util.repo_dir
         Rukkit::Core.load_plugins Rukkit::Util.repo_dir
         Rukkit::Util.broadcast '[Rukkit] reloaded'
-        Lingr.post '[RUKKIT] reloaded'
       when :update
-        Lingr.post '[RUKKIT] updating'
         Rukkit::Util.broadcast '[Rukkit] updating'
         Rukkit::Core.clone_or_update_repository Rukkit::Util.repo_dir, Rukkit::Util.plugin_repository
         Rukkit::Core.load_core_scripts
         Rukkit::Core.load_scripts Rukkit::Util.repo_dir
         Rukkit::Core.load_plugins Rukkit::Util.repo_dir
         Rukkit::Util.broadcast '[Rukkit] updated'
-        Lingr.post '[RUKKIT] updated'
       when :eval
         # TODO: Safe eval
       when :update_self
