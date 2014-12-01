@@ -8,5 +8,7 @@
             :url "http://opensource.org/licenses/MIT"}
   :repositories {"org.bukkit"
                  "http://repo.bukkit.org/content/groups/public/"}
-  :javac-options ["-d" "classes/" "-Xlint:deprecation"]
+  :javac-target "1.8"
+  :javac-source "1.8"
+  :javac-options ["-d" "classes/" "-Xlint:all"]
   :java-source-paths ["javasrc"])
