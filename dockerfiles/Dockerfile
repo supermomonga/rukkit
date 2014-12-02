@@ -5,6 +5,7 @@ RUN apt-get install -y git-core
 
 RUN mkdir -p /craftbukkit/plugins/rukkit/gems/
 ENV GEM_HOME /craftbukkit/plugins/rukkit/gems/
+ENV JRUBY_OPTS --2.0
 
 RUN git clone https://github.com/supermomonga/rukkit.git /rukkit
 RUN cp /rukkit/config.yml.sample /craftbukkit/plugins/rukkit/config.yml
