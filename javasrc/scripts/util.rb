@@ -3,6 +3,7 @@
 require 'java'
 import 'org.bukkit.Bukkit'
 import 'org.bukkit.ChatColor'
+import 'org.bukkit.Material'
 
 module Rukkit
   module Util
@@ -38,6 +39,34 @@ module Rukkit
 
     def play_sound(loc, sound, volume, pitch)
       loc.world.play_sound(loc, sound, jfloat(volume), jfloat(pitch))
+    end
+
+    def play_effect(loc, effect, data)
+      loc.world.play_effect(loc, effect, data)
+    end
+
+    # etype: org.bukkit.entity.EntityType
+    def spawn(loc, etype)
+      loc.world.spawn_entity(loc, etype)
+    end
+
+    def spawn_falling_block(loc, material, data)
+      loc.world.spawn_falling_block(loc, material, data)
+    end
+
+    def fall_block(block)
+      block_type, block_data = [block.type, block.data]
+      block.type = Material::AIR
+      block.data = 0
+      loc.world.spawn_falling_block(loc, block_type, block_data)
+    end
+
+    def drop_item(loc, itemstack)
+      loc.world.drop_item_naturally(loc, itemstack)
+    end
+
+    def explode(loc, power, set_fire_p)
+      loc.world.create_explosion(loc, jfloat(power), set_fire_p)
     end
 
     def jfloat(rubyfloat)
