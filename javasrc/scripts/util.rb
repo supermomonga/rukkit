@@ -22,6 +22,11 @@ module Rukkit
       (n * 20).to_i
     end
 
+    def repeat(tick, &block)
+      plugin = Bukkit.plugin_manager.get_plugin("rukkit")
+      Bukkit.scheduler.schedule_sync_repeating_task(plugin, block, 0, tick)
+    end
+
     def later(tick, &block)
       plugin = Bukkit.plugin_manager.get_plugin("rukkit")
       Bukkit.scheduler.schedule_sync_delayed_task(plugin, block, tick)
