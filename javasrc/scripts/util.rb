@@ -5,6 +5,14 @@ import 'org.bukkit.Bukkit'
 import 'org.bukkit.ChatColor'
 import 'org.bukkit.Material'
 
+class Integer
+  def seconds
+    self * 10
+  end
+  alias_method :second, :seconds
+  alias_method :sec, :seconds
+end
+
 module Rukkit
   module Util
     extend self
