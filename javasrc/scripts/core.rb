@@ -32,6 +32,7 @@ module Rukkit
 
         # Load user scripts and plugins
         load_scripts repo_dir
+        unload_plugins
         load_plugins repo_dir
       end
 
@@ -66,6 +67,13 @@ module Rukkit
           logger.info "----> Load #{script}"
           script_path = scripts_dir + script + '.rb'
           load script_path
+        end
+      end
+
+      def unload_plugins
+        @@eventhandlers ||= []
+        @@eventhandlers.each do |eh|
+          eh.deinitialize if eh.respond_to? :deinitialize
         end
       end
 
@@ -164,6 +172,7 @@ module Rukkit
         Rukkit::Util.broadcast '[Rukkit] reloading'
         Rukkit::Core.load_core_scripts
         Rukkit::Core.load_scripts Rukkit::Util.repo_dir
+        Rukkit::Core.unload_plugins
         Rukkit::Core.load_plugins Rukkit::Util.repo_dir
         Rukkit::Util.broadcast '[Rukkit] reloaded'
       when :update
@@ -171,6 +180,7 @@ module Rukkit
         Rukkit::Core.clone_or_update_repository Rukkit::Util.repo_dir, Rukkit::Util.plugin_repository
         Rukkit::Core.load_core_scripts
         Rukkit::Core.load_scripts Rukkit::Util.repo_dir
+        Rukkit::Core.unload_plugins
         Rukkit::Core.load_plugins Rukkit::Util.repo_dir
         Rukkit::Util.broadcast '[Rukkit] updated'
       when :eval
