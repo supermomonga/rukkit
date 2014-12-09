@@ -7,7 +7,7 @@ import 'org.bukkit.Material'
 
 class Integer
   def seconds
-    self * 10
+    self * 20
   end
   alias_method :second, :seconds
   alias_method :sec, :seconds
