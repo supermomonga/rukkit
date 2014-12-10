@@ -5,12 +5,29 @@ import 'org.bukkit.Bukkit'
 import 'org.bukkit.ChatColor'
 import 'org.bukkit.Material'
 
-class Integer
-  def seconds
-    self * 20
+module Rukkit
+  module TimeConvertable
+
+    def seconds_to_tick
+      self * 20
+    end
+    alias_method :sec, :seconds_to_tick
+
+    def minutes_to_tick
+      sec * 60
+    end
+    alias_method :minute, :minutes_to_tick
+
+    def hours_to_tick
+      minute * 60
+    end
+    alias_method :hour, :hours_to_tick
+
   end
-  alias_method :second, :seconds
-  alias_method :sec, :seconds
+end
+
+class Integer
+  include Rukkit::TimeConvertable
 end
 
 module Rukkit
