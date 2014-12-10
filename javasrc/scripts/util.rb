@@ -41,7 +41,7 @@ module Rukkit
   end
 end
 
-class Integer
+class Fixnum
   include Rukkit::TimeConvertable
 end
 
