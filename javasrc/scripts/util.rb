@@ -8,18 +8,33 @@ import 'org.bukkit.Material'
 module Rukkit
   module TimeConvertable
 
+    def seconds_in_minecraft
+      self
+    end
+    alias_method :mcsec, :seconds_in_minecraft
+
+    def minutes_in_minecraft
+      mcsec * 60
+    end
+    alias_method :mcminute, :minutes_in_minecraft
+
+    def seconds_in_minecraft
+      mcminute * 60
+    end
+    alias_method :mchour, :hours_in_minecraft
+
     def seconds_to_tick
-      self * 20
+      mcsec * 20
     end
     alias_method :sec, :seconds_to_tick
 
     def minutes_to_tick
-      sec * 60
+      mcminute * 20
     end
     alias_method :minute, :minutes_to_tick
 
     def hours_to_tick
-      minute * 60
+      mchour * 20
     end
     alias_method :hour, :hours_to_tick
 
