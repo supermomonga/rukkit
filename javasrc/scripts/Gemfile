@@ -1,0 +1,6 @@
+source 'https://rubygems.org'
+
+platforms :jruby do
+  gem 'redis'
+  gem 'redis-namespace'
+end
