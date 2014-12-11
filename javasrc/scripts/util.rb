@@ -21,7 +21,7 @@ module Rukkit
     def seconds_in_minecraft
       mcminute * 60
     end
-    alias_method :mchour, :hours_in_minecraft
+    alias_method :mchour, :seconds_in_minecraft
 
     def seconds_to_tick
       mcsec * 20
