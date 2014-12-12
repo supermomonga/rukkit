@@ -88,7 +88,7 @@ module Rukkit
           load plugin_path
 
           # register plugin to eventhandler mappings
-          module_name = Rukkit::Util.camelize plugin
+          module_name = Rukkit::Util.camelize(plugin)
           if eval("defined? #{module_name}") == 'constant'
             @@eventhandlers << Object.const_get(module_name)
             # log.info "------> #{@@eventhandlers.map(&:to_s)}"

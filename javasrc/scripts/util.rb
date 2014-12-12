@@ -173,18 +173,18 @@ module Rukkit
         acc[c.name.to_sym] = c
       }
 
-      if colors.keys.include? color_name
-        color = colors[color_name]
-      else
-        color = colors[:RESET]
-      end
+      color =
+        if colors.keys.include?(color_name)
+          colors[color_name]
+        else
+          colors[:RESET]
+        end
 
       "#{color}#{text}#{colors[:RESET]}"
     end
 
-    def camelize snake_case
+    def camelize(snake_case)
       snake_case.split('_').map(&:capitalize).join
     end
-
   end
 end
