@@ -12,7 +12,7 @@ RUN cd /rukkit && lein deps && lein uberjar
 RUN ln -s -f /rukkit/target/rukkit-1.0.0-SNAPSHOT-standalone.jar /craftbukkit/plugins/rukkit.jar
 
 RUN echo "compat.version=2.0" > ~/.jrubyrc
-RUN java -jar ~/.m2/repository/org/jruby/jruby-complete/1.7.16.1/jruby-complete-1.7.16.1.jar -S \
+RUN java -jar ~/.m2/repository/org/jruby/jruby-complete/1.7.17/jruby-complete-1.7.17.jar -S \
       gem install bundler
 
 ADD craftbukkit /usr/local/bin/craftbukkit

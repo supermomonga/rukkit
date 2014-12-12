@@ -49,12 +49,8 @@ module Rukkit
   module Util
     extend self
 
-    def log
-      Bukkit.plugin_manager.get_plugin('rukkit').logger
-    end
-
     def broadcast(*messages)
-      logger.info "broadcast: " + messages.join
+      log.info "broadcast: " + messages.join
       Bukkit.server.broadcast_message messages.join
     end
 
@@ -129,7 +125,7 @@ module Rukkit
       config "plugin_config.#{key}", type
     end
 
-    def logger
+    def log
       Bukkit.plugin_manager.get_plugin('rukkit').logger
     end
 

@@ -5,13 +5,12 @@ import 'java.util.jar.JarFile'
 import 'java.util.jar.JarEntry'
 import 'org.bukkit.Bukkit'
 
-
 module Rukkit
   class Core
     class << self
 
-      def logger
-        Rukkit::Util.logger
+      def log
+        Rukkit::Util.log
       end
 
       def init
@@ -46,25 +45,25 @@ module Rukkit
       end
 
       def load_core_scripts
-        logger.info "--> Load rukkit core scripts"
+        log.info "--> Load rukkit core scripts"
         reload_jar
         scripts = [
           :util,
           :core
         ]
         scripts.each do |script|
-          logger.info("----> #{script}")
+          log.info("----> #{script}")
           eval read_entry("scripts/#{script}.rb")
         end
       end
 
       def load_scripts(repo_dir)
         update_load_paths
-        logger.info "--> Load rukkit user scripts"
+        log.info "--> Load rukkit user scripts"
         scripts_dir = repo_dir + '/scripts/'
         scripts = Rukkit::Util.config 'scripts', :list
         scripts.each do |script|
-          logger.info "----> Load #{script}"
+          log.info "----> Load #{script}"
           script_path = scripts_dir + script + '.rb'
           load script_path
         end
@@ -80,11 +79,11 @@ module Rukkit
       def load_plugins(repo_dir)
         update_load_paths
         @@eventhandlers = []
-        logger.info "--> Load rukkit user plugins"
+        log.info "--> Load rukkit user plugins"
         plugins_dir = repo_dir + '/plugins/'
         plugins = Rukkit::Util.config 'plugins', :list
         plugins.each do |plugin|
-          logger.info "----> Load #{plugin}"
+          log.info "----> Load #{plugin}"
           plugin_path = plugins_dir + plugin + '.rb'
           load plugin_path
 
@@ -92,15 +91,15 @@ module Rukkit
           module_name = Rukkit::Util.camelize plugin
           if eval("defined? #{module_name}") == 'constant'
             @@eventhandlers << Object.const_get(module_name)
-            # logger.info "------> #{@@eventhandlers.map(&:to_s)}"
+            # log.info "------> #{@@eventhandlers.map(&:to_s)}"
           end
         end
-        logger.info "----> #{@@eventhandlers.map(&:to_s)}"
+        log.info "----> #{@@eventhandlers.map(&:to_s)}"
         @@eventhandlers.unshift Rukkit::Loader
       end
 
       def clone_or_update_repository(repo_dir, repo)
-        logger.info "--> Rukkit plugin repository"
+        log.info "--> Rukkit plugin repository"
         if File.exists? repo_dir
           update_repository repo_dir
         else
@@ -110,24 +109,24 @@ module Rukkit
       end
 
       def update_repository(repo_dir)
-        logger.info "----> Pull repository"
+        log.info "----> Pull repository"
         Dir.chdir(repo_dir) do
           `git pull --rebase`.split("\n").each do |l|
-            logger.info "------> #{l}"
+            log.info "------> #{l}"
           end
         end
       end
 
       def clone_repository(repo_dir, repo)
-        logger.info "----> Clone repository"
+        log.info "----> Clone repository"
         `git clone #{repo} #{repo_dir}`.split("\n").each do |l|
-          logger.info "------> #{l}"
+          log.info "------> #{l}"
         end
       end
 
       def update_dependencies(repo_dir)
-        logger.info "----> Update dependencies"
-        jruby = 'java -jar ~/.m2/repository/org/jruby/jruby-complete/1.7.16.1/jruby-complete-1.7.16.1.jar'
+        log.info "----> Update dependencies"
+        jruby = 'java -jar ~/.m2/repository/org/jruby/jruby-complete/1.7.17/jruby-complete-1.7.17.jar'
         # For disable rbenv shims
         ENV['PATH'] = ENV['PATH'].split(":").reject{
           |path| path == "#{ENV['HOME']}/.rbenv/shims"
@@ -138,14 +137,14 @@ module Rukkit
 
         Dir.chdir(repo_dir) do
           if `#{jruby} -S gem list | grep bundler` == ''
-            logger.info "------> Install bundler gem"
+            log.info "------> Install bundler gem"
             `#{jruby} -S gem install bundler`.split("\n").each do |l|
-              logger.info "--------> #{l}"
+              log.info "--------> #{l}"
             end
           end
-          logger.info "------> Install rubygems"
+          log.info "------> Install rubygems"
           `#{jruby} -S #{Rukkit::Util.bundler_path} install --path #{Rukkit::Util.bundler_gems_dir}`.split("\n").each do |l|
-            logger.info "--------> #{l}"
+            log.info "--------> #{l}"
           end
         end
       end
@@ -153,7 +152,7 @@ module Rukkit
       def fire_event(event, *args)
         @@eventhandlers.each do |eventhandler|
           if eventhandler.respond_to? event
-            # logger.info "event: #{eventhandler}.#{event}"
+            # log.info "event: #{eventhandler}.#{event}"
             eventhandler.send event, *args
           end
         end
@@ -188,13 +187,11 @@ module Rukkit
       when :update_self
         # TODO: Self update
       else
-        Rukkit::Util.logger.info('Invalid command.')
+        Rukkit::Util.log.info('Invalid command.')
       end
     end
   end
-
 end
 
 Rukkit::Core.init
 Rukkit::Core
-
