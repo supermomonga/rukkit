@@ -63,8 +63,9 @@ module Rukkit
         scripts_dir = repo_dir + '/scripts/'
         scripts = Rukkit::Util.config 'scripts', :list
         scripts.each do |script|
-          log.info "----> Load #{script}"
           script_path = scripts_dir + script + '.rb'
+          log.info "----> Load #{script}"
+          log.info "------> Load #{script_path}"
           load script_path
         end
       end
