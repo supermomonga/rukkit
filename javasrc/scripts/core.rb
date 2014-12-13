@@ -127,7 +127,7 @@ module Rukkit
 
       def update_dependencies(repo_dir)
         log.info "----> Update dependencies"
-        jruby = 'java -jar ~/.m2/repository/org/jruby/jruby-complete/1.7.17/jruby-complete-1.7.17.jar'
+        jruby = 'java -jar ~/.m2/repository/org/jruby/jruby-complete/1.7.16.1/jruby-complete-1.7.16.1.jar'
         # For disable rbenv shims
         ENV['PATH'] = ENV['PATH'].split(":").reject{
           |path| path == "#{ENV['HOME']}/.rbenv/shims"
