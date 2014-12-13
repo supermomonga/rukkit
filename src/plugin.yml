@@ -1,18 +1,13 @@
 name: rukkit
 main: com.supermomonga.rukkit.JRubyPlugin
-version: 1.0.0
-website: http://blog.supermomonga.com/
+version: 1.0.1
+website: http://rukkit.com/
 author: supermomonga
 description: benri
 commands:
   rukkit:
     description: rukkit commands
     usage: /rukkit [anything]
-aliases:
-  rkt:
-    - "rukkit $1-"
-rukkit:
-  plugin_dir:
-    "file://./user_plugins/"
-  plugins:
+    aliases:
+      - rkt
 
