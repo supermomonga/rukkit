@@ -1,15 +1,24 @@
 rukkit:
-  repository: https://github.com/supermomonga/akechi.rukkit.git
+  event_filename: all-events.txt
+  repository: git@github.com:supermomonga/akechi.rukkit.git
   plugins:
+    - skeleton_crossbow
     - say_hello_and_goodbye
     - strong_boots
     - fast_dash
+    - chat_convert
     # - chat_relay
     - super_jump
     - dummy
     # - notifications
+    - human_bulldozer
+    - shared_chest
   scripts:
     - lingr
   plugin_config:
+    lingr:
+      secret: FIXME
+      room: mcujm
+      bot: rukkit
+      server_port: 8124
 
-  event_filename: all-events.txt
