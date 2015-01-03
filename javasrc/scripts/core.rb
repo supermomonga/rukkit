@@ -170,18 +170,12 @@ module Rukkit
       case args.shift.to_sym
       when :reload
         Rukkit::Util.broadcast '[Rukkit] reloading'
-        Rukkit::Core.load_core_scripts
-        Rukkit::Core.load_scripts Rukkit::Util.repo_dir
-        Rukkit::Core.unload_plugins
-        Rukkit::Core.load_plugins Rukkit::Util.repo_dir
+        reload
         Rukkit::Util.broadcast '[Rukkit] reloaded'
       when :update
         Rukkit::Util.broadcast '[Rukkit] updating'
         Rukkit::Core.clone_or_update_repository Rukkit::Util.repo_dir, Rukkit::Util.plugin_repository
-        Rukkit::Core.load_core_scripts
-        Rukkit::Core.load_scripts Rukkit::Util.repo_dir
-        Rukkit::Core.unload_plugins
-        Rukkit::Core.load_plugins Rukkit::Util.repo_dir
+        reload
         Rukkit::Util.broadcast '[Rukkit] updated'
       when :eval
         # TODO: Safe eval
@@ -190,6 +184,14 @@ module Rukkit
       else
         Rukkit::Util.log.info('Invalid command.')
       end
+    end
+
+    def reload
+      Bukkit.reset_recipes
+      Rukkit::Core.load_core_scripts
+      Rukkit::Core.load_scripts Rukkit::Util.repo_dir
+      Rukkit::Core.unload_plugins
+      Rukkit::Core.load_plugins Rukkit::Util.repo_dir
     end
   end
 end
