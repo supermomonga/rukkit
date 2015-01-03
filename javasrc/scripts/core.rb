@@ -187,6 +187,7 @@ module Rukkit
     end
 
     def reload
+      Bukkit.reset_recipes
       Rukkit::Core.load_core_scripts
       Rukkit::Core.load_scripts Rukkit::Util.repo_dir
       Rukkit::Core.unload_plugins
