@@ -44,6 +44,11 @@ module Rukkit
         $LOAD_PATH.concat(Dir.glob File.expand_path(gems_dirs))
       end
 
+      def initializeRuby
+        log.info "--> Initialize ruby environment"
+        @@rukkit_java.initialize_ruby
+      end
+
       def load_core_scripts
         log.info "--> Load rukkit core scripts"
         reload_jar
@@ -187,11 +192,7 @@ module Rukkit
     end
 
     def reload
-      Bukkit.reset_recipes
-      Rukkit::Core.load_core_scripts
-      Rukkit::Core.load_scripts Rukkit::Util.repo_dir
-      Rukkit::Core.unload_plugins
-      Rukkit::Core.load_plugins Rukkit::Util.repo_dir
+      Rukkit::Core.initializeRuby
     end
   end
 end

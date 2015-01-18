@@ -21,6 +21,10 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -42,6 +46,7 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -184,25 +189,36 @@ public class JRubyPlugin extends JavaPlugin {
     }
   }
 
-  private ScriptingContainer jruby;
+  private RubyEnvironment jruby;
   private HashMap<String, Object> eventHandlers = new HashMap<String, Object>();
-  private Object rubyTrue, rubyFalse, rubyNil, rubyModule;
-  private Object rukkit_core;
 
-  private void initializeRuby() {
-    jruby = new ScriptingContainer();
-    jruby.setClassLoader(getClass().getClassLoader());
-    jruby.setCompatVersion(org.jruby.CompatVersion.RUBY2_0);
+  public void initializeRuby() {
+    getLogger().info("--> Initialize a ruby environment.");
 
-    // Because of no compatibility with Java's one
-    rubyTrue = evalRuby("true");
-    rubyFalse = evalRuby("false");
-    rubyNil = evalRuby("nil");
-    rubyModule = evalRuby("Module");
-  }
+    if(jruby != null) {
+        jruby.terminate();
+    }
+    jruby = new RubyEnvironment(this);
 
-  private boolean isRubyMethodExists(Object eventHandler, String method) {
-    return jruby.callMethod(eventHandler, "respond_to?", method).equals(rubyTrue);
+    Bukkit.resetRecipes();
+
+    jruby.initialize();
+
+    getLogger().info("--> Load rukkit core scripts.");
+    jruby.loadCoreScripts();
+
+    jruby.callMethod(
+        jruby.getCoreModule(),
+        "clone_or_update_repository",
+        jruby.getRepositoryDir().toString(),
+        getConfig().getString("rukkit.repository")
+    );
+
+    getLogger().info("--> Load rukkit user scripts.");
+    jruby.loadUserScripts();
+
+    getLogger().info("--> Load rukkit user plugins.");
+    jruby.loadUserPlugins();
   }
 
   // XXX: work around, javassist cannot handle enclosing private method
@@ -214,28 +230,7 @@ public class JRubyPlugin extends JavaPlugin {
       rubyArgs.add(arg);
     }
 
-    jruby.callMethod(rukkit_core, "fire_event", rubyArgs.toArray());
-  }
-
-  private Object evalRuby(String script) {
-    return jruby.runScriptlet(script);
-  }
-
-  private Object loadRukkitBundledScript(String script) {
-    getLogger().info("----> " + script);
-
-    try (
-      InputStream in = openResource("scripts/" + script + ".rb");
-      BufferedReader br = new BufferedReader(new InputStreamReader(in));
-    ) {
-      Object obj = evalRuby(br.lines().collect(Collectors.joining("\n")));
-      getLogger().info("----> done.");
-      return obj;
-    } catch (Exception e) {
-      getLogger().info("----> failed.");
-      e.printStackTrace();
-      return rubyNil;
-    }
+    jruby.callMethod(jruby.getCoreModule(), "fire_event", rubyArgs.toArray());
   }
 
   private InputStream openResource(String resourceName) throws IOException {
@@ -246,12 +241,6 @@ public class JRubyPlugin extends JavaPlugin {
     }
 
     return resource;
-  }
-
-  private void loadCoreScripts() {
-    loadRukkitBundledScript("util");
-    this.rukkit_core = loadRukkitBundledScript("core");
-    jruby.callMethod(this.rukkit_core, "run");
   }
 
   private void applyEventHandler() {
@@ -278,9 +267,6 @@ public class JRubyPlugin extends JavaPlugin {
       getLogger().warning("--> Failed to save event names to file:");
       getLogger().warning(Throwables.getStackTraceAsString(e));
     }
-
-    getLogger().info("--> Load core scripts.");
-    loadCoreScripts();
 
     getLogger().info("Rukkit enabled!");
 
