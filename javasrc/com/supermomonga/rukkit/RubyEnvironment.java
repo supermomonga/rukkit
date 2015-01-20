@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.bukkit.plugin.java.JavaPlugin;
@@ -45,8 +46,24 @@ class RubyEnvironment {
   }
 
   public void loadCoreScripts() {
-    rukkitUtil = loadRukkitBundledScript("util");
-    rukkitCore = loadRukkitBundledScript("core");
+    Function<String, Object> loader = (String scriptName) -> {
+      plugin.getLogger().info("----> " + scriptName);
+
+      try(InputStream in = openResource("scripts/" + scriptName + ".rb")) {
+        Object module = evalRuby(readAll(in));
+
+        plugin.getLogger().info("----> Done.");
+
+        return module;
+      }
+      catch(Exception e) {
+        // this is fatal error
+        throw new RuntimeException(e);
+      }
+    };
+
+    rukkitUtil = loader.apply("util");
+    rukkitCore = loader.apply("core");
   }
 
   public void loadUserScripts() {
@@ -134,20 +151,6 @@ class RubyEnvironment {
 
   private Object evalRuby(String script) {
     return jruby.runScriptlet(script);
-  }
-
-  private Object loadRukkitBundledScript(String script) {
-    plugin.getLogger().info("----> " + script);
-
-    try(InputStream in = openResource("scripts/" + script + ".rb")) {
-      Object obj = evalRuby(readAll(in));
-      plugin.getLogger().info("----> done.");
-      return obj;
-    } catch (Exception e) {
-      plugin.getLogger().info("----> failed.");
-      plugin.getLogger().warning(Throwables.getStackTraceAsString(e));
-      return evalRuby("nil");
-    }
   }
 
   private String readAll(InputStream in) throws IOException {
