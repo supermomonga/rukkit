@@ -1,65 +1,24 @@
 package com.supermomonga.rukkit;
 
-import com.google.common.base.Function;
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableSet;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BinaryOperator;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javassist.ClassClassPath;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtConstructor;
-import javassist.CtField;
-import javassist.CtMethod;
-import javassist.Modifier;
-import javassist.bytecode.AnnotationsAttribute;
-import javassist.bytecode.ConstPool;
-import javassist.bytecode.annotation.Annotation;
-
-import javax.tools.JavaCompiler;
-import javax.tools.JavaFileManager;
-import javax.tools.JavaFileObject;
-import javax.tools.StandardLocation;
-import javax.tools.ToolProvider;
-
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.Configuration;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jruby.embed.LocalContextScope;
 import org.jruby.embed.ScriptingContainer;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Iterables.transform;
 
 class RubyEnvironment {
   private final JavaPlugin plugin;
@@ -87,8 +46,24 @@ class RubyEnvironment {
   }
 
   public void loadCoreScripts() {
-    rukkitUtil = loadRukkitBundledScript("util");
-    rukkitCore = loadRukkitBundledScript("core");
+    Function<String, Object> loader = (String scriptName) -> {
+      plugin.getLogger().info("----> " + scriptName);
+
+      try(InputStream in = openResource("scripts/" + scriptName + ".rb")) {
+        Object module = evalRuby(readAll(in));
+
+        plugin.getLogger().info("----> Done.");
+
+        return module;
+      }
+      catch(Exception e) {
+        // this is fatal error
+        throw new RuntimeException(e);
+      }
+    };
+
+    rukkitUtil = loader.apply("util");
+    rukkitCore = loader.apply("core");
   }
 
   public void loadUserScripts() {
@@ -166,7 +141,7 @@ class RubyEnvironment {
   }
 
   private ScriptingContainer newRubyEnv() {
-    ScriptingContainer container = new ScriptingContainer();
+    ScriptingContainer container = new ScriptingContainer(LocalContextScope.SINGLETHREAD);
 
     container.setClassLoader(getClass().getClassLoader());
     container.setCompatVersion(org.jruby.CompatVersion.RUBY2_0);
@@ -176,20 +151,6 @@ class RubyEnvironment {
 
   private Object evalRuby(String script) {
     return jruby.runScriptlet(script);
-  }
-
-  private Object loadRukkitBundledScript(String script) {
-    plugin.getLogger().info("----> " + script);
-
-    try(InputStream in = openResource("scripts/" + script + ".rb")) {
-      Object obj = evalRuby(readAll(in));
-      plugin.getLogger().info("----> done.");
-      return obj;
-    } catch (Exception e) {
-      plugin.getLogger().info("----> failed.");
-      plugin.getLogger().warning(Throwables.getStackTraceAsString(e));
-      return evalRuby("nil");
-    }
   }
 
   private String readAll(InputStream in) throws IOException {

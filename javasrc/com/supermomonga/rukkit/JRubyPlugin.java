@@ -4,11 +4,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
@@ -16,18 +13,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import javassist.ClassClassPath;
 import javassist.ClassPool;
@@ -47,14 +42,16 @@ import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jruby.embed.ScriptingContainer;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.transform;
 
 public class JRubyPlugin extends JavaPlugin {
@@ -189,40 +186,97 @@ public class JRubyPlugin extends JavaPlugin {
     }
   }
 
-  private RubyEnvironment jruby;
-  private HashMap<String, Object> eventHandlers = new HashMap<String, Object>();
+  private final AtomicReference<RubyEnvironment> jruby = new AtomicReference<>();
+
+  private final AtomicReference<FileConfiguration> config = new AtomicReference<>();
 
   public void initializeRuby() {
     getLogger().info("--> Initialize a ruby environment.");
 
-    if(jruby != null) {
-        jruby.terminate();
+    final ExecutorService service= Executors.newCachedThreadPool();
+    final Runnable initializer = () -> {
+      try {
+        final RubyEnvironment newEnv = new RubyEnvironment(this);
+
+        newEnv.initialize();
+
+        getLogger().info("--> Load rukkit core scripts.");
+        newEnv.loadCoreScripts();
+
+        newEnv.callMethod(
+          newEnv.getCoreModule(),
+          "clone_or_update_repository",
+          newEnv.getRepositoryDir().toString(),
+          getConfig().getString("rukkit.repository")
+        );
+
+        final Server server = Bukkit.getServer();
+        synchronized(server) {
+          server.resetRecipes();
+
+          // calling reloadConfig() in this context, it depends on #getConfig() impl.
+          reloadConfig();
+          config.set(super.getConfig());
+
+          getLogger().info("--> Load rukkit user scripts.");
+          newEnv.loadUserScripts();
+
+          getLogger().info("--> Load rukkit user plugins.");
+          newEnv.loadUserPlugins();
+
+          // switch
+          final RubyEnvironment oldEnv = jruby.get();
+          if(oldEnv != null) {
+            oldEnv.terminate();
+          }
+          if(jruby.compareAndSet(oldEnv, newEnv)) {
+            getLogger().info("--> Updated.");
+          }
+          else {
+            getLogger().warning("--> Other update task has done, skipped.");
+          }
+        }
+      }
+      catch(Exception e)
+      {
+        getLogger().warning("--> Failed to update rukkit.");
+        getLogger().warning(Throwables.getStackTraceAsString(e));
+      }
+      finally {
+        service.shutdownNow();
+      }
+    };
+
+    // first time
+    if(jruby.get() == null) {
+      try {
+        // sync
+        getLogger().info("--> Start to update rukkit plugins.");
+        service.submit(initializer).get();
+      }
+      catch(InterruptedException e)
+      {
+        getLogger().info("--> Canceled.");
+      }
+      catch(ExecutionException e)
+      {
+        // initialzier throws no exception
+        throw new AssertionError(e);
+      }
     }
-    jruby = new RubyEnvironment(this);
-
-    Bukkit.resetRecipes();
-
-    jruby.initialize();
-
-    getLogger().info("--> Load rukkit core scripts.");
-    jruby.loadCoreScripts();
-
-    jruby.callMethod(
-        jruby.getCoreModule(),
-        "clone_or_update_repository",
-        jruby.getRepositoryDir().toString(),
-        getConfig().getString("rukkit.repository")
-    );
-
-    getLogger().info("--> Load rukkit user scripts.");
-    jruby.loadUserScripts();
-
-    getLogger().info("--> Load rukkit user plugins.");
-    jruby.loadUserPlugins();
+    else {
+      // async
+      getLogger().info("--> Schedule to update rukkit plugins.");
+      service.execute(initializer);
+    }
+    service.shutdown();
   }
 
   // XXX: work around, javassist cannot handle enclosing private method
   void fireEvent(String method, Object...args) {
+    final RubyEnvironment env = jruby.get();
+    checkState(env != null);
+
     List<Object> rubyArgs = new ArrayList<>(1 + args.length);
 
     rubyArgs.add(method);
@@ -230,17 +284,7 @@ public class JRubyPlugin extends JavaPlugin {
       rubyArgs.add(arg);
     }
 
-    jruby.callMethod(jruby.getCoreModule(), "fire_event", rubyArgs.toArray());
-  }
-
-  private InputStream openResource(String resourceName) throws IOException {
-    InputStream resource = this.getClass().getClassLoader().getResourceAsStream(resourceName);
-
-    if(resource == null) {
-      throw new IOException("No such resource `" + resourceName + "'.");
-    }
-
-    return resource;
+    env.callMethod(env.getCoreModule(), "fire_event", rubyArgs.toArray());
   }
 
   private void applyEventHandler() {
@@ -282,6 +326,18 @@ public class JRubyPlugin extends JavaPlugin {
   public boolean onCommand(org.bukkit.command.CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
     fireEvent("on_command", sender, command, label, args);
     return true;
+  }
+
+  @Override
+  public FileConfiguration getConfig() {
+    if(config.get() == null) {
+      config.compareAndSet(null, super.getConfig());
+    }
+
+    final FileConfiguration ret = config.get();
+    checkState(ret != null);
+
+    return ret;
   }
 
   private void writeEvents(Path path, Iterable<? extends RukkitEvent> events) throws IOException {

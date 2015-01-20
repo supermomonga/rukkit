@@ -44,11 +44,6 @@ module Rukkit
         $LOAD_PATH.concat(Dir.glob File.expand_path(gems_dirs))
       end
 
-      def initializeRuby
-        log.info "--> Initialize ruby environment"
-        @@rukkit_java.initialize_ruby
-      end
-
       def load_core_scripts
         log.info "--> Load rukkit core scripts"
         reload_jar
@@ -175,12 +170,11 @@ module Rukkit
       case args.shift.to_sym
       when :reload
         Rukkit::Util.broadcast '[Rukkit] reloading'
-        reload
+        Bukkit.plugin_manager.get_plugin('rukkit').initialize_ruby
         Rukkit::Util.broadcast '[Rukkit] reloaded'
       when :update
         Rukkit::Util.broadcast '[Rukkit] updating'
-        Rukkit::Core.clone_or_update_repository Rukkit::Util.repo_dir, Rukkit::Util.plugin_repository
-        reload
+        Bukkit.plugin_manager.get_plugin('rukkit').initialize_ruby
         Rukkit::Util.broadcast '[Rukkit] updated'
       when :eval
         # TODO: Safe eval
@@ -189,10 +183,6 @@ module Rukkit
       else
         Rukkit::Util.log.info('Invalid command.')
       end
-    end
-
-    def reload
-      Rukkit::Core.initializeRuby
     end
   end
 end
