@@ -169,9 +169,9 @@ module Rukkit
       args = args.to_a
       case args.shift.to_sym
       when :reload
-        Bukkit.plugin_manager.get_plugin('rukkit').initialize_ruby
+        Bukkit.plugin_manager.get_plugin('rukkit').reload_plugins
       when :update
-        Bukkit.plugin_manager.get_plugin('rukkit').initialize_ruby
+        Bukkit.plugin_manager.get_plugin('rukkit').update_plugins
       when :eval
         # TODO: Safe eval
       when :update_self
