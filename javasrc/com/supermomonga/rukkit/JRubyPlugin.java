@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableSet;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
@@ -14,7 +13,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -188,7 +186,6 @@ public class JRubyPlugin extends JavaPlugin {
   }
 
   private final AtomicReference<RubyEnvironment> jruby = new AtomicReference<>();
-  private HashMap<String, Object> eventHandlers = new HashMap<String, Object>();
 
   public void initializeRuby() {
     getLogger().info("--> Initialize a ruby environment.");
@@ -276,16 +273,6 @@ public class JRubyPlugin extends JavaPlugin {
     }
 
     env.callMethod(env.getCoreModule(), "fire_event", rubyArgs.toArray());
-  }
-
-  private InputStream openResource(String resourceName) throws IOException {
-    InputStream resource = this.getClass().getClassLoader().getResourceAsStream(resourceName);
-
-    if(resource == null) {
-      throw new IOException("No such resource `" + resourceName + "'.");
-    }
-
-    return resource;
   }
 
   private void applyEventHandler() {
