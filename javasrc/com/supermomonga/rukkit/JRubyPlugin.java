@@ -44,6 +44,7 @@ import javax.tools.ToolProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -187,6 +188,8 @@ public class JRubyPlugin extends JavaPlugin {
 
   private final AtomicReference<RubyEnvironment> jruby = new AtomicReference<>();
 
+  private final AtomicReference<FileConfiguration> config = new AtomicReference<>();
+
   public void initializeRuby() {
     getLogger().info("--> Initialize a ruby environment.");
 
@@ -210,6 +213,10 @@ public class JRubyPlugin extends JavaPlugin {
         final Server server = Bukkit.getServer();
         synchronized(server) {
           server.resetRecipes();
+
+          // calling reloadConfig() in this context, it depends on #getConfig() impl.
+          reloadConfig();
+          config.set(super.getConfig());
 
           getLogger().info("--> Load rukkit user scripts.");
           newEnv.loadUserScripts();
@@ -319,6 +326,18 @@ public class JRubyPlugin extends JavaPlugin {
   public boolean onCommand(org.bukkit.command.CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
     fireEvent("on_command", sender, command, label, args);
     return true;
+  }
+
+  @Override
+  public FileConfiguration getConfig() {
+    if(config.get() == null) {
+      config.compareAndSet(null, super.getConfig());
+    }
+
+    final FileConfiguration ret = config.get();
+    checkState(ret != null);
+
+    return ret;
   }
 
   private void writeEvents(Path path, Iterable<? extends RukkitEvent> events) throws IOException {
