@@ -230,6 +230,11 @@ public class JRubyPlugin extends JavaPlugin {
           }
         }
       }
+      catch(Exception e)
+      {
+        getLogger().warning("--> Failed to update rukkit.");
+        getLogger().warning(Throwables.getStackTraceAsString(e));
+      }
       finally {
         service.shutdownNow();
       }
@@ -248,8 +253,8 @@ public class JRubyPlugin extends JavaPlugin {
       }
       catch(ExecutionException e)
       {
-        getLogger().warning("--> Failed to update rukkit.");
-        getLogger().warning(Throwables.getStackTraceAsString(e));
+        // initialzier throws no exception
+        throw new AssertionError(e);
       }
     }
     else {
