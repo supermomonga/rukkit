@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -194,7 +195,7 @@ public class JRubyPlugin extends JavaPlugin {
     getLogger().info("--> Initialize a ruby environment.");
 
     final ExecutorService service= Executors.newCachedThreadPool();
-    final Runnable initializer = () -> {
+    final Callable<Boolean> initializer = () -> {
       try {
         final RubyEnvironment newEnv = new RubyEnvironment(this);
 
@@ -231,9 +232,11 @@ public class JRubyPlugin extends JavaPlugin {
           }
           if(jruby.compareAndSet(oldEnv, newEnv)) {
             getLogger().info("--> Updated.");
+            return true;
           }
           else {
             getLogger().warning("--> Other update task has done, skipped.");
+            return false;
           }
         }
       }
@@ -241,6 +244,7 @@ public class JRubyPlugin extends JavaPlugin {
       {
         getLogger().warning("--> Failed to update rukkit.");
         getLogger().warning(Throwables.getStackTraceAsString(e));
+        return false;
       }
       finally {
         service.shutdownNow();
@@ -267,7 +271,25 @@ public class JRubyPlugin extends JavaPlugin {
     else {
       // async
       getLogger().info("--> Schedule to update rukkit plugins.");
-      service.execute(initializer);
+      Bukkit.broadcastMessage("[Rukkit] Schedule to update.");
+
+      service.execute(() -> {
+        final boolean updated;
+        try {
+          updated = initializer.call();
+        }
+        catch(Exception e) {
+          // initialzier throws no exception
+          throw new AssertionError(e);
+        }
+
+        if(updated) {
+          Bukkit.broadcastMessage("[Rukkit] Updated");
+        }
+        else {
+          Bukkit.broadcastMessage("[Rukkit] Skipped");
+        }
+      });
     }
     service.shutdown();
   }
