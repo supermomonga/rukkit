@@ -256,7 +256,11 @@ public class JRubyPlugin extends JavaPlugin {
       try {
         // sync
         getLogger().info("--> Start to update rukkit plugins.");
-        service.submit(initializer).get();
+        final boolean updated = service.submit(initializer).get();
+        // this is at first, will get a ton of errors if failed to load plugins.
+        if(!updated) {
+          throw new RuntimeException("Couldnot initialize ruby environment.");
+        }
       }
       catch(InterruptedException e)
       {
