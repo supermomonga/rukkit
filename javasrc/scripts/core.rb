@@ -165,7 +165,7 @@ module Rukkit
     extend self
 
     def on_command(sender, command, label, args)
-      return unless label == 'rukkit'
+      return unless %w[rukkit rkt].include?(label)
       args = args.to_a
       case args.shift.to_sym
       when :reload
