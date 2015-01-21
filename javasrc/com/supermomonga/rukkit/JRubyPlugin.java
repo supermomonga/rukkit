@@ -281,10 +281,14 @@ public class JRubyPlugin extends JavaPlugin {
         }
 
         if(updated) {
-          Bukkit.broadcastMessage("[Rukkit] Updated");
+          Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
+            Bukkit.broadcastMessage("[Rukkit] Updated");
+          }, 0);
         }
         else {
-          Bukkit.broadcastMessage("[Rukkit] Skipped");
+          Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
+            Bukkit.broadcastMessage("[Rukkit] Skipped");
+          }, 0);
         }
       });
     }
@@ -388,10 +392,14 @@ public class JRubyPlugin extends JavaPlugin {
         }
 
         if(updated) {
-          Bukkit.broadcastMessage("[Rukkit] Updated");
+          Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
+            Bukkit.broadcastMessage("[Rukkit] Updated");
+          }, 0);
         }
         else {
-          Bukkit.broadcastMessage("[Rukkit] Skipped");
+          Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
+            Bukkit.broadcastMessage("[Rukkit] Skipped");
+          }, 0);
         }
       });
     }
