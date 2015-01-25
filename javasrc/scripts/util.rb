@@ -7,6 +7,9 @@ import 'org.bukkit.Material'
 
 module Rukkit
   module TimeConvertable
+    def plugin
+      Bukkit.plugin_manager.get_plugin("rukkit")
+    end
 
     def seconds_in_minecraft
       self
@@ -59,13 +62,11 @@ module Rukkit
     end
 
     def repeat(tick, &block)
-      plugin = Bukkit.plugin_manager.get_plugin("rukkit")
-      Bukkit.scheduler.schedule_sync_repeating_task(plugin, block, 0, tick)
+      Bukkit.scheduler.schedule_sync_repeating_task(self.plugin, block, 0, tick)
     end
 
     def later(tick, &block)
-      plugin = Bukkit.plugin_manager.get_plugin("rukkit")
-      Bukkit.scheduler.schedule_sync_delayed_task(plugin, block, tick)
+      Bukkit.scheduler.schedule_sync_delayed_task(self.plugin, block, tick)
     end
 
     def block_below(block)
@@ -117,7 +118,7 @@ module Rukkit
     def config(key, type = :string)
       config_path = "rukkit.#{key}"
       method = "get_#{type}"
-      config = Bukkit.plugin_manager.get_plugin('rukkit').config
+      config = self.plugin.config
       config.send method, config_path
     end
 
@@ -126,17 +127,15 @@ module Rukkit
     end
 
     def log
-      Bukkit.plugin_manager.get_plugin('rukkit').logger
+      self.plugin.logger
     end
 
     def plugin_repository
-      Bukkit.plugin_manager.get_plugin('rukkit').config.get_string "rukkit.repository"
+      self.plugin.config.get_string "rukkit.repository"
     end
 
     def rukkit_dir
-      path =
-        Bukkit.plugin_manager.
-        get_plugin('rukkit').
+      path = self.plugin.
         get_class.
         protection_domain.
         code_source.
