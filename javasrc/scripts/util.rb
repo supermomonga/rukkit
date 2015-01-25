@@ -185,5 +185,13 @@ module Rukkit
     def camelize(snake_case)
       snake_case.split('_').map(&:capitalize).join
     end
+
+    def consume_item(player)
+      if player.item_in_hand.amount == 1
+        player.item_in_hand = ItemStack.new(Material::AIR)
+      else
+        player.item_in_hand.amount -= 1
+      end
+    end
   end
 end
