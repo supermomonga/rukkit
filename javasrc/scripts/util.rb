@@ -7,10 +7,6 @@ import 'org.bukkit.Material'
 
 module Rukkit
   module TimeConvertable
-    def plugin
-      Bukkit.plugin_manager.get_plugin("rukkit")
-    end
-
     def seconds_in_minecraft
       self
     end
@@ -51,6 +47,10 @@ end
 module Rukkit
   module Util
     extend self
+
+    def plugin
+      Bukkit.plugin_manager.get_plugin("rukkit")
+    end
 
     def broadcast(*messages)
       log.info "broadcast: " + messages.join
