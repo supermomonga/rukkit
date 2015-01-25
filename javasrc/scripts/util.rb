@@ -73,7 +73,7 @@ module Rukkit
     end
 
     def add_loc(loc, x, y, z)
-      l = loc.dup
+      l = loc.clone
       l.add(x, y, z)
       l
     end
