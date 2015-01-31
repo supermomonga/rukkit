@@ -48,11 +48,14 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.server.PluginDisableEvent;
+import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
 
 public class JRubyPlugin extends JavaPlugin {
@@ -90,7 +93,7 @@ public class JRubyPlugin extends JavaPlugin {
       }
 
       allEvents = ImmutableSet.copyOf(listEvents());
-      for(RukkitEvent event : allEvents) {
+      for(RukkitEvent event : filter(allEvents, JRubyPlugin::ableToAutoHandle)) {
         CtMethod method = new CtMethod(CtClass.voidType, "on" + event.getJavaEventName(), new CtClass[0], clazz);
 
         // set annotation
@@ -118,6 +121,16 @@ public class JRubyPlugin extends JavaPlugin {
     catch(Exception e) {
       throw new ExceptionInInitializerError(e);
     }
+  }
+
+  private static boolean ableToAutoHandle(RukkitEvent event) {
+    if("PluginEnable".equals(event.getJavaEventName())) {
+      return false;
+    }
+    if("PluginDisable".equals(event.getJavaEventName())) {
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -221,9 +234,11 @@ public class JRubyPlugin extends JavaPlugin {
           // switch
           final RubyEnvironment oldEnv = jruby.get();
           if(oldEnv != null) {
+            fireEvent(oldEnv, "on_plugin_disable", new PluginDisableEvent(this));
             oldEnv.terminate();
           }
           if(jruby.compareAndSet(oldEnv, newEnv)) {
+            fireEvent(newEnv, "on_plugin_enable", new PluginEnableEvent(this));
             getLogger().info("--> Updated.");
             return true;
           }
@@ -332,9 +347,11 @@ public class JRubyPlugin extends JavaPlugin {
           // switch
           final RubyEnvironment oldEnv = jruby.get();
           if(oldEnv != null) {
+            fireEvent(oldEnv, "on_plugin_disable", new PluginDisableEvent(this));
             oldEnv.terminate();
           }
           if(jruby.compareAndSet(oldEnv, newEnv)) {
+            fireEvent(newEnv, "on_plugin_enable", new PluginEnableEvent(this));
             getLogger().info("--> Updated.");
             return true;
           }
@@ -411,6 +428,10 @@ public class JRubyPlugin extends JavaPlugin {
     final RubyEnvironment env = jruby.get();
     checkState(env != null);
 
+    fireEvent(env, method, args);
+  }
+
+  private void fireEvent(RubyEnvironment env, String method, Object...args) {
     List<Object> rubyArgs = new ArrayList<>(1 + args.length);
 
     rubyArgs.add(method);
@@ -453,6 +474,7 @@ public class JRubyPlugin extends JavaPlugin {
 
   @Override
   public void onDisable() {
+    fireEvent("on_plugin_disable", new PluginDisableEvent(this));
     getLogger().info("Rukkit disabled!");
   }
 
