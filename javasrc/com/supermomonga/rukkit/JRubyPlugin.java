@@ -206,112 +206,14 @@ public class JRubyPlugin extends JavaPlugin {
   private final AtomicReference<FileConfiguration> config = new AtomicReference<>();
 
   public void reloadPlugins() {
-    getLogger().info("--> Initialize a ruby environment.");
-
-    final ExecutorService service= Executors.newCachedThreadPool();
-    final Callable<Boolean> initializer = () -> {
-      try {
-        final RubyEnvironment newEnv = new RubyEnvironment(this);
-
-        newEnv.initialize();
-
-        getLogger().info("--> Load rukkit core scripts.");
-        newEnv.loadCoreScripts();
-
-        final Server server = Bukkit.getServer();
-        synchronized(server) {
-          server.resetRecipes();
-
-          // calling reloadConfig() in this context, it depends on #getConfig() impl.
-          reloadConfig();
-          config.set(super.getConfig());
-
-          getLogger().info("--> Load rukkit user scripts.");
-          newEnv.loadUserScripts();
-
-          getLogger().info("--> Load rukkit user plugins.");
-          newEnv.loadUserPlugins();
-
-          // switch
-          final RubyEnvironment oldEnv = jruby.get();
-          if(oldEnv != null) {
-            fireEvent(oldEnv, "on_plugin_disable", new PluginDisableEvent(this));
-            oldEnv.terminate();
-          }
-          if(jruby.compareAndSet(oldEnv, newEnv)) {
-            fireEvent(newEnv, "on_plugin_enable", new PluginEnableEvent(this));
-            getLogger().info("--> Updated.");
-            return true;
-          }
-          else {
-            getLogger().warning("--> Other update task has done, skipped.");
-            return false;
-          }
-        }
-      }
-      catch(Exception e)
-      {
-        getLogger().warning("--> Failed to update rukkit.");
-        getLogger().warning(Throwables.getStackTraceAsString(e));
-        return false;
-      }
-      finally {
-        service.shutdownNow();
-      }
-    };
-
-    // first time
-    if(jruby.get() == null) {
-      try {
-        // sync
-        getLogger().info("--> Start to update rukkit plugins.");
-        final boolean updated = service.submit(initializer).get();
-        // this is at first, will get a ton of errors if failed to load plugins.
-        if(!updated) {
-          throw new RuntimeException("Couldnot initialize ruby environment.");
-        }
-      }
-      catch(InterruptedException e)
-      {
-        getLogger().info("--> Canceled.");
-      }
-      catch(ExecutionException e)
-      {
-        // initialzier throws no exception
-        throw new AssertionError(e);
-      }
-    }
-    else {
-      // async
-      getLogger().info("--> Schedule to update rukkit plugins.");
-      Bukkit.broadcastMessage("[Rukkit] Schedule to update.");
-
-      service.execute(() -> {
-        final boolean updated;
-        try {
-          updated = initializer.call();
-        }
-        catch(Exception e) {
-          // initialzier throws no exception
-          throw new AssertionError(e);
-        }
-
-        if(updated) {
-          Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
-            Bukkit.broadcastMessage("[Rukkit] Updated");
-          }, 0);
-        }
-        else {
-          Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
-            Bukkit.broadcastMessage("[Rukkit] Skipped");
-          }, 0);
-        }
-      });
-    }
-    service.shutdown();
+    reloadPlugins(false);
   }
 
   public void updatePlugins() {
+    reloadPlugins(true);
+  }
+
+  private void reloadPlugins(final boolean refreshDependencies) {
     getLogger().info("--> Initialize a ruby environment.");
 
     final ExecutorService service= Executors.newCachedThreadPool();
@@ -321,15 +223,16 @@ public class JRubyPlugin extends JavaPlugin {
 
         newEnv.initialize();
 
-        getLogger().info("--> Load rukkit core scripts.");
         newEnv.loadCoreScripts();
 
-        newEnv.callMethod(
-          newEnv.getCoreModule(),
-          "clone_or_update_repository",
-          newEnv.getRepositoryDir().toString(),
-          getConfig().getString("rukkit.repository")
-        );
+        if(refreshDependencies) {
+          newEnv.callMethod(
+            newEnv.getCoreModule(),
+            "clone_or_update_repository",
+            newEnv.getRepositoryDir().toString(),
+            getConfig().getString("rukkit.repository")
+          );
+        }
 
         final Server server = Bukkit.getServer();
         synchronized(server) {
@@ -339,10 +242,8 @@ public class JRubyPlugin extends JavaPlugin {
           reloadConfig();
           config.set(super.getConfig());
 
-          getLogger().info("--> Load rukkit user scripts.");
           newEnv.loadUserScripts();
 
-          getLogger().info("--> Load rukkit user plugins.");
           newEnv.loadUserPlugins();
 
           // switch

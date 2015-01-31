@@ -46,6 +46,8 @@ class RubyEnvironment {
   }
 
   public void loadCoreScripts() {
+    plugin.getLogger().info("--> Load rukkit core scripts.");
+
     Function<String, Object> loader = (String scriptName) -> {
       plugin.getLogger().info("----> " + scriptName);
 
@@ -67,6 +69,8 @@ class RubyEnvironment {
   }
 
   public void loadUserScripts() {
+    plugin.getLogger().info("--> Load rukkit user scripts.");
+
     Path dirpath = getRepositoryDir().resolve("scripts");
     @SuppressWarnings("unchecked")
     List<String> scripts = (List<String>)plugin.getConfig().getList("rukkit.scripts", Collections.emptyList());
@@ -93,6 +97,8 @@ class RubyEnvironment {
   }
 
   public void loadUserPlugins() {
+    plugin.getLogger().info("--> Load rukkit user plugins.");
+
     Path dirpath = getRepositoryDir();
 
     callMethod(getCoreModule(), "load_plugins", dirpath.toString());
