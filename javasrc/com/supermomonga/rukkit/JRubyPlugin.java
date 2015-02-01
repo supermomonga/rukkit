@@ -424,7 +424,7 @@ public class JRubyPlugin extends JavaPlugin {
   }
 
   // XXX: work around, javassist cannot handle enclosing private method
-  void fireEvent(String method, Object...args) {
+  Object fireEvent(String method, Object...args) {
     final RubyEnvironment env = jruby.get();
     checkState(env != null);
 
@@ -439,7 +439,7 @@ public class JRubyPlugin extends JavaPlugin {
       rubyArgs.add(arg);
     }
 
-    env.callMethod(env.getCoreModule(), "fire_event", rubyArgs.toArray());
+    return env.callMethod(env.getCoreModule(), "fire_event", rubyArgs.toArray());
   }
 
   private void applyEventHandler() {
@@ -482,6 +482,11 @@ public class JRubyPlugin extends JavaPlugin {
   public boolean onCommand(org.bukkit.command.CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
     fireEvent("on_command", sender, command, label, args);
     return true;
+  }
+
+  @Override
+  public List<String> onTabComplete(org.bukkit.command.CommandSender sender, org.bukkit.command.Command command, String alias, String[] args) {
+    return fireEvent("on_tab_complete", sender, command, alias, args);
   }
 
   @Override
