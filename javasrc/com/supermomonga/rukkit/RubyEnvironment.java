@@ -135,6 +135,10 @@ class RubyEnvironment {
     return rukkitCore;
   }
 
+  public Object getUtilModule() {
+    return rukkitUtil;
+  }
+
   Path getRukkitDir() {
     Path jarpath = Paths.get(getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
     plugin.getLogger().config("jarpath=" + jarpath);

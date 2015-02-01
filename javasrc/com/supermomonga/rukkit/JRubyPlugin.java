@@ -249,11 +249,11 @@ public class JRubyPlugin extends JavaPlugin {
           // switch
           final RubyEnvironment oldEnv = jruby.get();
           if(oldEnv != null) {
-            fireEvent(oldEnv, "on_plugin_disable", new PluginDisableEvent(this));
+            firePluginDisableEvent(oldEnv);
             oldEnv.terminate();
           }
           if(jruby.compareAndSet(oldEnv, newEnv)) {
-            fireEvent(newEnv, "on_plugin_enable", new PluginEnableEvent(this));
+            firePluginEnableEvent(newEnv);
             getLogger().info("--> Updated.");
             return true;
           }
@@ -344,6 +344,44 @@ public class JRubyPlugin extends JavaPlugin {
     return env.callMethod(env.getCoreModule(), "fire_event", rubyArgs.toArray());
   }
 
+  private void firePluginEnableEvent() {
+    RubyEnvironment env = jruby.get();
+    checkState(env != null);
+
+    firePluginEnableEvent(env);
+  }
+
+  private void firePluginEnableEvent(RubyEnvironment env) {
+    PluginEnableEvent event = new PluginEnableEvent(this);
+
+    env.callMethod(
+      env.getUtilModule(),
+      "send",
+      "__on_plugin_enable",
+      event
+    );
+    fireEvent(env, "on_plugin_enable", event);
+  }
+
+  private void firePluginDisableEvent() {
+    RubyEnvironment env = jruby.get();
+    checkState(env != null);
+
+    firePluginDisableEvent(env);
+  }
+
+  private void firePluginDisableEvent(RubyEnvironment env) {
+    PluginDisableEvent event = new PluginDisableEvent(this);
+
+    fireEvent(env, "on_plugin_disable", event);
+    env.callMethod(
+      env.getUtilModule(),
+      "send",
+      "__on_plugin_disable",
+      event
+    );
+  }
+
   private void applyEventHandler() {
     getServer().getPluginManager().registerEvents(newDynamicEventHandler(this), this);
   }
@@ -376,7 +414,7 @@ public class JRubyPlugin extends JavaPlugin {
 
   @Override
   public void onDisable() {
-    fireEvent("on_plugin_disable", new PluginDisableEvent(this));
+    firePluginDisableEvent();
     getLogger().info("Rukkit disabled!");
   }
 

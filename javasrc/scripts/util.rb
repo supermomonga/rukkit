@@ -4,6 +4,7 @@ require 'java'
 import 'org.bukkit.Bukkit'
 import 'org.bukkit.ChatColor'
 import 'org.bukkit.Material'
+import 'redis.clients.jedis.Jedis'
 
 module Rukkit
   module TimeConvertable
@@ -193,5 +194,42 @@ module Rukkit
         player.item_in_hand.amount -= 1
       end
     end
+
+    def jedis()
+      @@jedis
+    end
+
+    def jedis?()
+      @@jedis
+    end
+
+    def __on_plugin_enable(evt)
+      host = plugin.config.get_string('rukkit.jedis.host', 'localhost')
+      port = plugin.config.get_int('rukkit.jedis.port', 6379)
+
+      log.info "--> Connecting to #{host}:#{port} using jedis."
+      begin
+        @@jedis = Jedis.new host, port
+        @@jedis.connect
+      rescue Exception => e
+        log.warning e.message
+        @@jedis = nil
+      end
+    end
+    private :__on_plugin_enable
+
+    def __on_plugin_disable(evt)
+      if @@jedis
+        begin
+          log.info "--> Disconnecting."
+          @@jedis.close
+        rescue Exception => e
+          log.warning e.message
+        ensure
+          @@jedis = nil
+        end
+      end
+    end
+    private :__on_plugin_disable
   end
 end
