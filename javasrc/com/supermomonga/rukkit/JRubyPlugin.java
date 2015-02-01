@@ -491,7 +491,9 @@ public class JRubyPlugin extends JavaPlugin {
     if(ret instanceof List) {
       @SuppressWarnings("unchecked")
       List<String> raw = (List<String>)ret;
-      return Collections.checkedList(raw, String.class);
+      List<String> result = Collections.checkedList(new ArrayList<>(raw.size()), String.class);
+      result.addAll(raw);
+      return result;
     }
     else {
       return Collections.emptyList();
