@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -428,10 +429,10 @@ public class JRubyPlugin extends JavaPlugin {
     final RubyEnvironment env = jruby.get();
     checkState(env != null);
 
-    fireEvent(env, method, args);
+    return fireEvent(env, method, args);
   }
 
-  private void fireEvent(RubyEnvironment env, String method, Object...args) {
+  private Object fireEvent(RubyEnvironment env, String method, Object...args) {
     List<Object> rubyArgs = new ArrayList<>(1 + args.length);
 
     rubyArgs.add(method);
@@ -486,7 +487,15 @@ public class JRubyPlugin extends JavaPlugin {
 
   @Override
   public List<String> onTabComplete(org.bukkit.command.CommandSender sender, org.bukkit.command.Command command, String alias, String[] args) {
-    return fireEvent("on_tab_complete", sender, command, alias, args);
+    Object ret = fireEvent("on_tab_complete", sender, command, alias, args);
+    if(ret instanceof List) {
+      @SuppressWarnings("unchecked")
+      List<String> raw = (List<String>)ret;
+      return Collections.checkedList(raw, String.class);
+    }
+    else {
+      return Collections.emptyList();
+    }
   }
 
   @Override
