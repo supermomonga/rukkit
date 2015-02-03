@@ -151,12 +151,13 @@ module Rukkit
       end
 
       def fire_event(event, *args)
-        @@eventhandlers.each do |eventhandler|
-          if eventhandler.respond_to? event
-            # log.info "event: #{eventhandler}.#{event}"
-            eventhandler.send event, *args
-          end
-        end
+        results = @@eventhandlers.select { |eventhandler|
+          eventhandler.respond_to? event
+        }.map { |eventhandler|
+          # log.info "event: #{eventhandler}.#{event}"
+          eventhandler.send event, *args
+        }
+        results ? results.flatten.compact.uniq : nil
       end
     end
   end
