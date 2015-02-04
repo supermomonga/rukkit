@@ -21,4 +21,6 @@ rukkit:
       room: mcujm
       bot: rukkit
       server_port: 8124
-
+    redis:
+      host: localhost
+      port: 6379
