@@ -210,6 +210,7 @@ module Rukkit
         @@jedis.connect
       rescue Exception => e
         log.warning e.message
+        log.warning "--> Disabling redis feature."
         @@jedis = nil
       end
     end
