@@ -200,10 +200,6 @@ module Rukkit
       @@jedis
     end
 
-    def jedis?()
-      @@jedis
-    end
-
     def __on_plugin_enable(evt)
       host = plugin.config.get_string('rukkit.plugin_config.redis.host', 'localhost')
       port = plugin.config.get_int('rukkit.plugin_config.redis.port', Protocol::DEFAULT_PORT)
