@@ -5,6 +5,7 @@ import 'org.bukkit.Bukkit'
 import 'org.bukkit.ChatColor'
 import 'org.bukkit.Material'
 import 'redis.clients.jedis.Jedis'
+import 'redis.clients.jedis.Protocol'
 
 module Rukkit
   module TimeConvertable
@@ -204,8 +205,8 @@ module Rukkit
     end
 
     def __on_plugin_enable(evt)
-      host = plugin.config.get_string('rukkit.jedis.host', 'localhost')
-      port = plugin.config.get_int('rukkit.jedis.port', 6379)
+      host = plugin.config.get_string('rukkit.plugin_config.redis.host', 'localhost')
+      port = plugin.config.get_int('rukkit.plugin_config.redis.port', Protocol::DEFAULT_PORT)
 
       log.info "--> Connecting to #{host}:#{port} using jedis."
       begin
