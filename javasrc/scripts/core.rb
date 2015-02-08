@@ -168,6 +168,8 @@ module Rukkit
     def on_command(sender, command, label, args)
       return unless %w[rukkit rkt].include?(label)
       args = args.to_a
+      return if args.empty?
+
       case args.shift.to_sym
       when :reload
         Bukkit.plugin_manager.get_plugin('rukkit').reload_plugins
