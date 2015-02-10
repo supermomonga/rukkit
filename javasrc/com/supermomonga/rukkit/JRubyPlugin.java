@@ -408,7 +408,7 @@ public class JRubyPlugin extends JavaPlugin {
 
         getLogger().info("----> Use it for core storage.");
         String resp = jedis.select(0);
-        if(!"".equals(resp)) {
+        if(resp != null && !"".equals(resp)) {
           for(String line : resp.split("\r?\n")) {
             getLogger().info("------> " + line);
           }
