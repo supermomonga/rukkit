@@ -127,6 +127,28 @@ module Rukkit
 
       def update_dependencies(repo_dir)
         log.info "----> Update dependencies"
+
+        # check timestamp
+        if @@rukkit_java.jedis
+          unless File.exists? Rukkit::Util.bundler_gems_dir
+            gemfile = "#{repo_dir}/Gemfile"
+            begin
+              local_modtime = File.mtime(gemfile).to_f
+            rescue e
+              log.warning "------> Cannot get last modification time for #{gemfile}."
+              log.warning "------> #{e}"
+            end
+
+            last_modtime = @@rukkit_java.jedis.get 'last_modtime'
+            if local_modtime > last_modtime
+              @@rukkit_java.jedis.set 'last_modtime', local_modtime
+            else
+              log.info "------> Skipped."
+              return
+            end
+          end
+        end
+
         jruby = 'java -jar ~/.m2/repository/org/jruby/jruby-complete/1.7.16.1/jruby-complete-1.7.16.1.jar'
         # For disable rbenv shims
         ENV['PATH'] = ENV['PATH'].split(":").reject{
