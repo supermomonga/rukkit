@@ -1,6 +1,9 @@
 rukkit:
   event_filename: all-events.txt
   repository: git@github.com:supermomonga/akechi.rukkit.git
+  redis:
+    host: localhost
+    port: 6379
   plugins:
     - skeleton_crossbow
     - say_hello_and_goodbye

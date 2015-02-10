@@ -53,6 +53,8 @@ import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.Protocol;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -204,6 +206,12 @@ public class JRubyPlugin extends JavaPlugin {
   private final AtomicReference<RubyEnvironment> jruby = new AtomicReference<>();
 
   private final AtomicReference<FileConfiguration> config = new AtomicReference<>();
+
+  private Jedis jedis;
+
+  public Jedis getJedis() {
+    return jedis;
+  }
 
   public void reloadPlugins() {
     reloadPlugins(false);
@@ -390,6 +398,31 @@ public class JRubyPlugin extends JavaPlugin {
   public void onEnable() {
     Configuration config = getConfig();
 
+    {
+      final String host = config.getString("rukkit.redis.host", "localhost");
+      final int port = config.getInt("rukkit.redis.port", Protocol.DEFAULT_PORT);
+      getLogger().info("--> Connecting redis...");
+      try {
+        jedis = new Jedis(host, port);
+        jedis.connect();
+
+        getLogger().info("----> Use it for core storage.");
+        String resp = jedis.select(0);
+        if(!"".equals(resp)) {
+          for(String line : resp.split("\r?\n")) {
+            getLogger().info("------> " + line);
+          }
+        }
+
+        getLogger().info("----> Connected.");
+      }
+      catch(Exception e) {
+        jedis = null;
+        getLogger().warning("----> Failed to connect " + host + ":" + port);
+        getLogger().warning(Throwables.getStackTraceAsString(e));
+      }
+    }
+
     updatePlugins();
 
     getLogger().info("--> Save all event names to file.");
@@ -415,6 +448,22 @@ public class JRubyPlugin extends JavaPlugin {
   @Override
   public void onDisable() {
     firePluginDisableEvent();
+
+    if(jedis != null) {
+      getLogger().info("--> Disconnecting redis...");
+      try {
+        jedis.close();
+        getLogger().info("----> Disconnected.");
+      }
+      catch(Exception e) {
+        getLogger().warning("----> Failed to disconnect.");
+        getLogger().warning(Throwables.getStackTraceAsString(e));
+      }
+      finally {
+        jedis = null;
+      }
+    }
+
     getLogger().info("Rukkit disabled!");
   }
 
