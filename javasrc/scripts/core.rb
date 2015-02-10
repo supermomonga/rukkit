@@ -130,21 +130,24 @@ module Rukkit
 
         # check timestamp
         if @@rukkit_java.jedis
-          unless File.exists? Rukkit::Util.bundler_gems_dir
+          if File.exists? Rukkit::Util.bundler_gems_dir
             gemfile = "#{repo_dir}/Gemfile"
             begin
               local_modtime = File.mtime(gemfile).to_f
-            rescue e
+              last_modtime = @@rukkit_java.jedis.get 'last_modtime'
+
+              log.config "local_modtime = #{local_modtime}"
+              log.config "last_modtime = #{last_modtime}"
+
+              if not last_modtime or local_modtime > last_modtime.to_f
+                @@rukkit_java.jedis.set 'last_modtime', local_modtime.to_s
+              else
+                log.info "------> Skipped."
+                return
+              end
+            rescue => e
               log.warning "------> Cannot get last modification time for #{gemfile}."
               log.warning "------> #{e}"
-            end
-
-            last_modtime = @@rukkit_java.jedis.get 'last_modtime'
-            if local_modtime > last_modtime
-              @@rukkit_java.jedis.set 'last_modtime', local_modtime
-            else
-              log.info "------> Skipped."
-              return
             end
           end
         end
