@@ -419,7 +419,7 @@ public class JRubyPlugin extends JavaPlugin {
       catch(Exception e) {
         jedis = null;
         getLogger().warning("----> Failed to connect " + host + ":" + port);
-        getLogger().warning(Throwables.getStackTraceAsString(e));
+        getLogger().warning(e.getMessage());
       }
     }
 
