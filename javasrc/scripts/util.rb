@@ -208,6 +208,10 @@ module Rukkit
       begin
         @@jedis = Jedis.new host, port
         @@jedis.connect
+
+        log.info "----> Use it for plugin storage."
+        @@jedis.select 1
+        log.info "------> OK."
       rescue Exception => e
         log.warning e.message
         log.warning "--> Disabling redis feature."
