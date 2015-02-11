@@ -130,7 +130,7 @@ module Rukkit
 
         # check timestamp
         if @@rukkit_java.jedis
-          if File.exists? Rukkit::Util.bundler_gems_dir
+          if File.directory? Rukkit::Util.bundler_gems_dir
             gemfile = "#{repo_dir}/Gemfile"
             begin
               local_modtime = File.mtime(gemfile).to_f
