@@ -1,65 +1,32 @@
 
 ## Rukkit
 
-Rukkit(pronounce `ルゥリィァキーッツッッッ！`) is the bukkit plugin which allows you to customize bukkit's behavior by using JRuby.
+Rukkit(pronounce `ルゥリィァキーッツッッッ！`) is the bukkit plugin which allows you to customize spigot's behavior by using JRuby.
 
 ![ルゥリィァキーッツッッッ！](http://d.pr/i/1biAv.png)
 
-## How to install it to your craftbukkit server
+## How to install it to your spigot server
 
 (TODO)
 
-## Local setup
+## How to build
 
 For local development
 
-### Dependencies and install instruction
+### Build spigot
 
-[See github wiki](https://github.com/supermomonga/rukkit/wiki/Install-dependencies).
+You need to build spigot by yourself, and push it to the local maven repository.
 
-
-### Setup virtual machine
-
-1. Ensure that you installed following software
-  - `Vagrant` and `VirtualBox`
-2. Clone this repository and move to inside.
-  - `git clone git@github.com:supermomonga/rukkit.git`
-  - `cd ./rukkit`
-3. Create Vagrant VM and make sure to ssh
-  - `vagrant up`
-
-### Edit your config.yml
-
-You need to edit `config.yml` to make rukkit works.
-
-File is at `/home/vagrant/craftbukkit/plugins/rukkit/config.yml`.
-
-```sh
-vagrant ssh
-vi /home/vagrant/craftbukkit/plugins/rukkit/config.yml
+```
+lein deploy localrepo org.spigotmc/spigot 1.10 spigot-1.10.jar
 ```
 
+### Build rukkit
 
-### Run
+```
+lein uberjar
+```
 
-1. Check vagrant status and ensure VM is running
-  - `vagrant status` shows you the status of VM
-  - `vagrant up` if VM isn't running
-2. SSH to VM and run bukkit server
-  - `vagrant ssh`
-  - `/home/vagrant/craftbukkit/run`
-2. Launch Minecraft and connect to `localhost:25565`.
-
-### Stop
-
-1. Stop Vagrant VM
-  - `vagrant halt`
-
-### Deploy latest rukkit
-
-1. `vagrant ssh`
-2. `cd /vagrant`
-2. `lein uberjar`
 
 ## License
 
