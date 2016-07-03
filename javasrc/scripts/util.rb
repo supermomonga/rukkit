@@ -146,6 +146,20 @@ module Rukkit
       File.dirname(path) + "/rukkit/"
     end
 
+    def jruby_path
+      pattern = rukkit_dir + 'jruby-complete-*.jar'
+      files = Dir[pattern]
+      if files.empty?
+        nil
+      else
+        files.sort { |a,b|
+          ver_a = a.match(%r`jruby-complete-([\d.]+)\.jar`)[1]
+          ver_b = b.match(%r`jruby-complete-([\d.]+)\.jar`)[1]
+          Gem::Version.new(ver_b) <=> Gem::Version.new(ver_a)
+        }.first
+      end
+    end
+
     def gems_dirs
       "#{bundler_gems_dir}/*/*/gems/**/lib/"
     end

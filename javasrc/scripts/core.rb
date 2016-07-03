@@ -152,26 +152,30 @@ module Rukkit
           end
         end
 
-        jruby = 'java -jar ~/.m2/repository/org/jruby/jruby-complete/1.7.16.1/jruby-complete-1.7.16.1.jar'
-        # For disable rbenv shims
-        ENV['PATH'] = ENV['PATH'].split(":").reject{
-          |path| path == "#{ENV['HOME']}/.rbenv/shims"
-        }.join(":")
+        if Rukkit::Util.jruby_path
+          jruby = "java -jar #{Rukkit::Util.jruby_path}"
+          # For disable rbenv shims
+          ENV['PATH'] = ENV['PATH'].split(":").reject{
+            |path| path == "#{ENV['HOME']}/.rbenv/shims"
+          }.join(":")
 
-        `mkdir -p #{Rukkit::Util.gem_home}`
-        ENV['GEM_HOME'] = Rukkit::Util.gem_home
+          `mkdir -p #{Rukkit::Util.gem_home}`
+          ENV['GEM_HOME'] = Rukkit::Util.gem_home
 
-        Dir.chdir(repo_dir) do
-          if `#{jruby} -S gem list | grep bundler` == ''
-            log.info "------> Install bundler gem"
-            `#{jruby} -S gem install bundler`.split("\n").each do |l|
+          Dir.chdir(repo_dir) do
+            if `#{jruby} -S gem list | grep bundler` == ''
+              log.info "------> Install bundler gem"
+              `#{jruby} -S gem install bundler`.split("\n").each do |l|
+                log.info "--------> #{l}"
+              end
+            end
+            log.info "------> Install rubygems"
+            `#{jruby} -S #{Rukkit::Util.bundler_path} install --path #{Rukkit::Util.bundler_gems_dir}`.split("\n").each do |l|
               log.info "--------> #{l}"
             end
           end
-          log.info "------> Install rubygems"
-          `#{jruby} -S #{Rukkit::Util.bundler_path} install --path #{Rukkit::Util.bundler_gems_dir}`.split("\n").each do |l|
-            log.info "--------> #{l}"
-          end
+        else
+          log.info "------> JRuby is not found. Skip installing gems."
         end
       end
 
