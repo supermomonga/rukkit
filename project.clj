@@ -18,4 +18,5 @@
   :javac-target "1.8"
   :javac-source "1.8"
   :javac-options ["-d" "classes/" "-Xlint:all"]
-  :java-source-paths ["javasrc"])
+  :java-source-paths ["javasrc"]
+  :profiles {:dev {:dependencies [[org.jmockit/jmockit "1.13"]]}})
